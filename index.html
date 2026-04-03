@@ -1,17 +1,21 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Landing from './Landing'
-import App from './App'
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/app" element={<App />} />
-        <Route path="/app/*" element={<App />} />
-      </Routes>
-    </BrowserRouter>
-  </React.StrictMode>
-)
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="GetMealWise — Smart family meal planning powered by community. AI-powered weekly meal plans with allergen filtering and UK supermarket price comparison. Free forever." />
+    <meta property="og:title" content="GetMealWise — Smart Family Meal Planning" />
+    <meta property="og:description" content="AI-powered weekly meal plans with allergen filtering and UK supermarket price comparison. Free forever." />
+    <meta property="og:url" content="https://getmealwise.co.uk" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GetMealWise — Smart Family Meal Planning" />
+    <meta name="twitter:description" content="AI-powered weekly meal plans with allergen filtering and UK supermarket price comparison. Free forever." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>GetMealWise — Smart Family Meal Planning</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
