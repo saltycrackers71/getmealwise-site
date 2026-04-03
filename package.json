@@ -1,22 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="GetMealWise — Smart family meal planning powered by community. AI-powered weekly meal plans with allergen filtering and UK supermarket price comparison. Free forever." />
-    <meta name="keywords" content="meal planner, family meals, gluten free meals, UK meal planning, weekly dinner ideas, allergen free meals" />
-    <meta property="og:title" content="GetMealWise — Smart Family Meal Planning" />
-    <meta property="og:description" content="AI-powered weekly meal plans with allergen filtering and UK supermarket price comparison. Free forever." />
-    <meta property="og:url" content="https://getmealwise.co.uk" />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="GetMealWise — Smart Family Meal Planning" />
-    <meta name="twitter:description" content="AI-powered weekly meal plans with allergen filtering and UK supermarket price comparison. Free forever." />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>GetMealWise — Smart Family Meal Planning</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
+{
+  "name": "getmealwise",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.1.0"
+  }
+}
