@@ -1614,6 +1614,7 @@ export default function MealWise() {
   const [customisations, setCustomisations] = useState({});
   const [supers, setSupers] = useState([]);
   const [email, setEmail] = useState("");
+  const [postcode, setPostcode] = useState("");
   const [gdpr, setGdpr] = useState(false);
   const [stars, setStars] = useState(0);
   const [feedback, setFeedback] = useState("");
@@ -1895,7 +1896,7 @@ Return ONLY this JSON (no explanation, no markdown):
           {sugSent?" Your meal suggestion is queued for review!":""}
         </div>
         <div style={{maxWidth:320,margin:"28px auto 0"}}>
-          <button className="cta" onClick={()=>{setPlan(null);setFbSent(false);setSugSent(false);setEmail("");setCustomisations({});setScreen("prefs");}}>Plan next week →</button>
+          <button className="cta" onClick={()=>{setPlan(null);setFbSent(false);setSugSent(false);setEmail("");setPostcode("");setCustomisations({});setScreen("prefs");}}>Plan next week →</button>
           <button className="cta ghost" style={{marginTop:8}} onClick={()=>setScreen("shopping")}>Back to shopping list</button>
         </div>
       </div>
@@ -2020,9 +2021,23 @@ Return ONLY this JSON (no explanation, no markdown):
           {SUPERMARKETS.map(s=><div key={s} className={`sup-c${supers.includes(s)?" on":""}`} onClick={()=>setSupers(p=>p.includes(s)?p.filter(x=>x!==s):[...p,s])}>{s}</div>)}
         </div>
         <input className="e-inp" type="email" placeholder="Your email address" value={email} onChange={e=>setEmail(e.target.value)}/>
+
+        {/* Postcode field */}
+        <input
+          className="e-inp"
+          type="text"
+          placeholder="Your postcode area e.g. ST4, SO14, G1 (optional)"
+          value={postcode}
+          maxLength={4}
+          onChange={e=>setPostcode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,""))}
+        />
+        <div style={{fontSize:10,opacity:0.65,textAlign:"left",marginBottom:10,lineHeight:1.5,padding:"0 2px"}}>
+          📍 Just your outward postcode (the first part — e.g. ST4 not ST4 1AA). This helps us build a geographic map of food prices across the UK. We never store your full address.
+        </div>
+
         <div className="gdpr">
           <input type="checkbox" checked={gdpr} onChange={e=>setGdpr(e.target.checked)}/>
-          <div className="gdpr-t">I agree to receive the free GetMealWise weekly community report by email. I can unsubscribe any time. Data is never sold or shared.</div>
+          <div className="gdpr-t">I agree to receive the free GetMealWise weekly community report by email. I can unsubscribe any time. My postcode area may be used anonymously in community pricing reports. Data is never sold or shared.</div>
         </div>
         <button className="up-cta" disabled={!email||!gdpr} onClick={()=>setScreen("feedback")}>📧 Upload receipt & join the community</button>
         <span className="skip" onClick={()=>setScreen("feedback")}>Skip for now</span>
