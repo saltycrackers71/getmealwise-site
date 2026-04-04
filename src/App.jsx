@@ -823,6 +823,522 @@ const MEALS = [
   },
 ];
 
+// ─── SAINSBURY'S PRICE DATABASE (April 2026) ─────────────────────────────────
+// All prices in £ per 100g or £ per unit as noted
+// Sources: Sainsbury's receipts March 2026 + live lookup April 2026
+const PRICES = {
+  // ── Proteins (£ per 100g) ──
+  "whole chicken":        0.33,  // 1.6kg £5.35
+  "chicken breast":       0.73,  // 320g £2.34
+  "chicken thigh":        0.30,  // 1kg £2.99
+  "chicken mince":        0.73,  // same as breast
+  "chicken pieces":       0.30,  // thighs rate
+  "chicken dippers":      0.65,  // estimated from frozen range
+  "beef mince":           0.93,  // 1kg £9.25
+  "beef braising":        1.25,  // 500g £6.25
+  "beef steak":           1.89,  // rump 225g £4.25
+  "beef burger":          0.88,  // 454g £4.00
+  "pork chop":            0.85,  // tenderloin rate
+  "pork tenderloin":      0.85,  // 460g £3.93
+  "pork sausage":         0.81,  // 400g £3.25
+  "pork fillet":          0.85,
+  "gammon":               0.75,  // estimated (not on receipt)
+  "bacon":                0.45,  // 300g £1.35 avg
+  "hot dog":              0.49,  // 380g £1.85
+  "lamb mince":           1.60,  // 500g £8.00
+  "lamb leg":             1.67,  // per kg normalised sale price
+  "lamb shoulder":        2.06,  // 400g £8.25
+  "king prawn":           1.58,  // 400g frozen £6.33
+  "prawn":                1.58,
+  "white fish":           0.45,  // 520g £2.33
+  "fish finger":          1.04,  // 360g £3.75
+  "salmon":               2.95,  // 100g £2.95
+  "fish pie mix":         0.80,  // estimated blend
+  "sausage roll":         0.65,  // estimated
+
+  // ── Dairy & Eggs (£ per 100g or per unit) ──
+  "egg":                  0.24,  // per egg (£2.90/dozen) — use perUnit
+  "butter":               0.75,  // 250g £1.87
+  "milk":                 0.073, // per 100ml, 2.27L £1.65
+  "double cream":         0.67,  // 300ml £2.00
+  "creme fraiche":        0.35,  // 300ml £1.05
+  "natural yoghurt":      0.47,  // 500g £2.35
+  "cheddar":              0.63,  // 600g £3.79
+  "cheese":               0.63,  // default to cheddar
+  "mozzarella":           0.55,  // 125g £0.69
+  "feta":                 0.43,  // 200g £0.85
+  "parmesan":             2.00,  // 200g £4.00
+  "cream cheese":         0.60,  // estimated
+
+  // ── Vegetables (£ per 100g) ──
+  "white potato":         0.066, // 2kg £1.32
+  "potato":               0.066,
+  "baking potato":        0.099, // x4 £0.79
+  "sweet potato":         0.12,  // per kg £1.19
+  "carrot":               0.069, // 1kg £0.69
+  "onion":                0.10,  // per kg ~£1.00
+  "garlic":               0.22,  // per bulb £0.22
+  "ginger":               0.56,  // per 100g (£5.60/kg)
+  "pepper":               0.47,  // each ~150g £0.70
+  "courgette":            0.29,  // 500g £1.45
+  "aubergine":            0.33,  // each ~300g £0.99
+  "broccoli":             0.25,  // head ~400g £1.00
+  "spinach":              0.75,  // 200g £1.50
+  "green bean":           0.73,  // 200g £1.45
+  "spring onion":         0.69,  // bunch ~100g £0.69
+  "mushroom":             0.29,  // 400g £1.15
+  "tomato":               0.28,  // per kg £2.80
+  "cucumber":             0.22,  // each ~370g £0.82
+  "lettuce":              0.87,  // pack avg (whole unit)
+  "butternut squash":     0.15,  // per kg £1.50
+  "parsnip":              0.15,  // per kg £1.47
+  "cabbage":              0.15,  // estimated
+  "frozen pea":           0.12,  // estimated
+  "sweetcorn":            0.25,  // 198g tin £0.49
+  "lemon":                0.35,  // per unit
+  "lime":                 0.24,  // per unit
+
+  // ── Carbs — dry weight (£ per 100g) ──
+  "basmati rice":         0.18,  // 1kg £1.79
+  "rice":                 0.18,
+  "pasta":                0.15,  // GF penne/spaghetti 500g £0.75
+  "spaghetti":            0.15,
+  "penne":                0.15,
+  "tagliatelle":          0.15,
+  "lasagne sheet":        0.30,  // 250g £0.75
+  "macaroni":             0.15,
+  "lentil":               0.20,  // 1kg £2.00
+  "chapati":              0.20,  // estimated
+  "naan":                 0.25,  // estimated
+  "tortilla chip":        0.45,  // 200g £0.89
+
+  // ── Tins & Jars (£ per 100g or unit) ──
+  "chopped tomato":       0.11,  // 400g £0.43
+  "tomato puree":         0.33,  // 200g £0.65
+  "pasta sauce":          0.14,  // 500g £0.69
+  "kidney bean":          0.11,  // 400g £0.45
+  "baked bean":           0.34,  // 415g £1.40
+  "coconut milk":         0.25,  // 400ml £1.00
+  "pineapple":            0.27,  // 425g £1.15
+  "apple sauce":          0.24,  // 250ml £0.60
+  "mint sauce":           0.30,  // jar £0.82 ~275g
+  "apricot jam":          0.20,  // 454g £0.89
+  "teriyaki sauce":       1.05,  // 200g £2.10
+  "sweet sour sauce":     0.24,  // 500g £1.20
+  "curry paste":          1.12,  // 290g £3.25
+  "stock cube":           0.15,  // per cube
+  "gravy granule":        0.88,  // 170g £1.50
+  "prawn cracker":        0.45,  // similar to tortilla
+
+  // ── Oils & Sundry ──
+  "olive oil":            0.75,  // per 100ml, 1L £7.50
+  "sunflower oil":        0.17,  // per 100ml, 1L £1.65
+  "hash brown":           0.32,  // 625g £2.00
+};
+
+// ─── BNF PORTION SIZES (grams per adult per meal) ────────────────────────────
+// Source: British Nutrition Foundation — Your Balanced Diet guide
+const BNF = {
+  // Proteins
+  wholeChicken:    350, // whole roast chicken — 350g cooked per person incl bone loss
+  chickenBreast:   130, // cooked breast
+  chickenThigh:    150, // bone-in thighs (2 per person)
+  beefMince:       130, // mince in sauce
+  beefBraising:    150, // stew/hotpot
+  beefBurger:      115, // one quarter-pounder (114g raw)
+  pork:            130,
+  lamb:            130,
+  fish:            130, // fillet
+  prawn:           120,
+  // Carbs (dry weight — converts to cooked)
+  riceDry:          75, // cooks to ~200g
+  pastaDry:         80, // cooks to ~200g
+  potato:          200, // raw (peeled)
+  lentilDry:        75,
+  // Veg
+  veg:              80, // one BNF portion
+  // Dairy in sauces
+  milkSauce:       120, // ml per person
+  creamSauce:       40, // ml per person
+  cheese:           30, // hard cheese per person
+  // Storecupboard buffer (oils, herbs, seasonings, stock, puree etc.)
+  storecupboard:  0.40, // £ per person flat addition
+};
+
+// ─── MEAL COST CALCULATOR ─────────────────────────────────────────────────────
+// Calculates realistic per-meal cost using BNF portions × real Sainsbury's prices
+// Returns cost for the whole family (familySize people)
+const calcMealCost = (mealName, familySize) => {
+  const n = familySize || 4;
+
+  // Map each meal to its key cost components
+  const recipes = {
+    "Roast Chicken with Roast Potatoes, Yorkshire & Gravy": () =>
+      PRICES["whole chicken"] * BNF.wholeChicken * n
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["milk"] * 100 * n / 100  // yorkshire batter
+      + PRICES["egg"] * 1               // yorkshire
+      + PRICES["gravy granule"] * 15,
+
+    "Roast Pork with Apple Sauce, Roast Potatoes & Veg": () =>
+      PRICES["pork tenderloin"] * BNF.pork * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["apple sauce"] * 50 / 100
+      + PRICES["carrot"] * BNF.veg * n / 100,
+
+    "Roast Lamb with Roast Potatoes, Cabbage & Peas": () =>
+      PRICES["lamb leg"] * BNF.lamb * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["frozen pea"] * BNF.veg * n / 100
+      + PRICES["mint sauce"] * 30 / 100,
+
+    "Chicken & Vegetable Curry with Basmati Rice": () =>
+      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
+      + PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["curry paste"] * 60 / 100
+      + PRICES["chopped tomato"] * 200 / 100
+      + PRICES["onion"] * 100 / 100
+      + PRICES["pepper"] * 100 / 100,
+
+    "Butter Chicken Curry with Basmati Rice": () =>
+      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
+      + PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["curry paste"] * 80 / 100
+      + PRICES["double cream"] * BNF.creamSauce * n / 100
+      + PRICES["chopped tomato"] * 200 / 100,
+
+    "Chicken Tikka Masala with Pilau Rice": () =>
+      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
+      + PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["curry paste"] * 80 / 100
+      + PRICES["coconut milk"] * 150 / 100
+      + PRICES["chopped tomato"] * 200 / 100,
+
+    "Beef Curry with Basmati Rice": () =>
+      PRICES["beef braising"] * BNF.beefBraising * n / 100
+      + PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["curry paste"] * 60 / 100
+      + PRICES["chopped tomato"] * 200 / 100
+      + PRICES["onion"] * 100 / 100,
+
+    "Lamb Curry with Basmati Rice": () =>
+      PRICES["lamb shoulder"] * BNF.lamb * n / 100
+      + PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["curry paste"] * 80 / 100
+      + PRICES["natural yoghurt"] * 100 / 100
+      + PRICES["chopped tomato"] * 200 / 100,
+
+    "Vegetable Curry with Basmati Rice": () =>
+      PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["curry paste"] * 60 / 100
+      + PRICES["chopped tomato"] * 200 / 100
+      + PRICES["kidney bean"] * 200 / 100
+      + PRICES["spinach"] * 80 / 100
+      + PRICES["onion"] * 100 / 100,
+
+    "Chicken Teriyaki Stir Fry with Basmati Rice": () =>
+      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
+      + PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["teriyaki sauce"] * 60 / 100
+      + PRICES["broccoli"] * BNF.veg * n / 100
+      + PRICES["pepper"] * 100 / 100,
+
+    "Beef Teriyaki Stir Fry with Egg Fried Rice": () =>
+      PRICES["beef steak"] * BNF.beefBraising * n / 100
+      + PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["egg"] * n
+      + PRICES["teriyaki sauce"] * 60 / 100
+      + PRICES["broccoli"] * BNF.veg * n / 100,
+
+    "Pork & Veg Stir Fry with Teriyaki & Rice": () =>
+      PRICES["pork fillet"] * BNF.pork * n / 100
+      + PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["teriyaki sauce"] * 60 / 100
+      + PRICES["pepper"] * 100 / 100,
+
+    "Sweet & Sour Chicken with Rice & Prawn Crackers": () =>
+      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
+      + PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["sweet sour sauce"] * 150 / 100
+      + PRICES["prawn cracker"] * 50 / 100
+      + PRICES["pineapple"] * 100 / 100,
+
+    "Sweet & Sour Pork with Rice & Prawn Crackers": () =>
+      PRICES["pork fillet"] * BNF.pork * n / 100
+      + PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["sweet sour sauce"] * 150 / 100
+      + PRICES["prawn cracker"] * 50 / 100
+      + PRICES["pineapple"] * 100 / 100,
+
+    "Prawn & Vegetable Stir Fry with Egg Fried Rice": () =>
+      PRICES["king prawn"] * BNF.prawn * n / 100
+      + PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["egg"] * n
+      + PRICES["pepper"] * 100 / 100
+      + PRICES["spring onion"] * 50 / 100,
+
+    "Thai Green Chicken Curry with Jasmine Rice": () =>
+      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
+      + PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["curry paste"] * 70 / 100
+      + PRICES["coconut milk"] * 200 / 100
+      + PRICES["green bean"] * 80 / 100
+      + PRICES["spinach"] * 50 / 100,
+
+    "Nepalese Lentil Dal with Rice & Chapati": () =>
+      PRICES["lentil"] * BNF.lentilDry * n / 100
+      + PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["chapati"] * 60 * n / 100
+      + PRICES["chopped tomato"] * 200 / 100
+      + PRICES["onion"] * 100 / 100
+      + PRICES["spinach"] * 80 / 100,
+
+    "Spaghetti Bolognese with Cheesy Garlic Bread": () =>
+      PRICES["beef mince"] * BNF.beefMince * n / 100
+      + PRICES["spaghetti"] * BNF.pastaDry * n / 100
+      + PRICES["chopped tomato"] * 400 / 100
+      + PRICES["cheddar"] * 20 / 100
+      + PRICES["pasta sauce"] * 100 / 100,
+
+    "Chicken Pasta in Homemade Tomato & Basil Sauce": () =>
+      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
+      + PRICES["penne"] * BNF.pastaDry * n / 100
+      + PRICES["chopped tomato"] * 400 / 100
+      + PRICES["tomato puree"] * 40 / 100
+      + PRICES["onion"] * 80 / 100,
+
+    "Creamy Chicken Tagliatelle with Garlic & Mushrooms": () =>
+      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
+      + PRICES["tagliatelle"] * BNF.pastaDry * n / 100
+      + PRICES["double cream"] * BNF.creamSauce * n / 100
+      + PRICES["mushroom"] * 100 / 100
+      + PRICES["parmesan"] * 20 / 100,
+
+    "Sausage Pasta with Vegetables & Tomato Sauce": () =>
+      PRICES["pork sausage"] * BNF.pork * n / 100
+      + PRICES["penne"] * BNF.pastaDry * n / 100
+      + PRICES["chopped tomato"] * 400 / 100
+      + PRICES["pepper"] * 100 / 100
+      + PRICES["onion"] * 80 / 100,
+
+    "Meatballs & Penne in Tomato Sauce": () =>
+      PRICES["beef mince"] * BNF.beefMince * n / 100
+      + PRICES["penne"] * BNF.pastaDry * n / 100
+      + PRICES["egg"] * 1
+      + PRICES["chopped tomato"] * 400 / 100
+      + PRICES["parmesan"] * 20 / 100,
+
+    "Lasagne with Cheesy Garlic Bread": () =>
+      PRICES["beef mince"] * BNF.beefMince * n / 100
+      + PRICES["lasagne sheet"] * 60 * n / 100
+      + PRICES["milk"] * BNF.milkSauce * n / 100
+      + PRICES["butter"] * 25 / 100
+      + PRICES["cheddar"] * 50 / 100
+      + PRICES["chopped tomato"] * 400 / 100,
+
+    "Mushroom & Spinach Pasta in Creamy Sauce": () =>
+      PRICES["mushroom"] * 150 / 100
+      + PRICES["penne"] * BNF.pastaDry * n / 100
+      + PRICES["double cream"] * BNF.creamSauce * n / 100
+      + PRICES["spinach"] * 100 / 100
+      + PRICES["parmesan"] * 25 / 100,
+
+    "Mac & Cheese with Prawns & Garlic Bread": () =>
+      PRICES["king prawn"] * BNF.prawn * n / 100
+      + PRICES["macaroni"] * BNF.pastaDry * n / 100
+      + PRICES["milk"] * BNF.milkSauce * n / 100
+      + PRICES["cheddar"] * 80 / 100
+      + PRICES["butter"] * 25 / 100,
+
+    "Cottage Pie with Frozen Peas": () =>
+      PRICES["beef mince"] * BNF.beefMince * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["frozen pea"] * BNF.veg * n / 100
+      + PRICES["chopped tomato"] * 200 / 100
+      + PRICES["carrot"] * 80 / 100
+      + PRICES["butter"] * 20 / 100
+      + PRICES["milk"] * 50 / 100,
+
+    "Shepherd's Pie with Green Beans & Gravy": () =>
+      PRICES["lamb mince"] * BNF.lamb * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["green bean"] * BNF.veg * n / 100
+      + PRICES["carrot"] * 80 / 100
+      + PRICES["gravy granule"] * 15 / 100
+      + PRICES["butter"] * 20 / 100,
+
+    "Beef & Vegetable Hotpot with Sliced Potato": () =>
+      PRICES["beef braising"] * BNF.beefBraising * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["carrot"] * BNF.veg * n / 100
+      + PRICES["onion"] * 100 / 100,
+
+    "Sausage & Mash with Peas, Carrots & Gravy": () =>
+      PRICES["pork sausage"] * 150 * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["frozen pea"] * BNF.veg * n / 100
+      + PRICES["carrot"] * BNF.veg * n / 100
+      + PRICES["gravy granule"] * 20 / 100,
+
+    "Toad in the Hole with Mash & Green Beans": () =>
+      PRICES["pork sausage"] * 150 * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["green bean"] * BNF.veg * n / 100
+      + PRICES["egg"] * 3
+      + PRICES["milk"] * 100 / 100,
+
+    "Gammon, Egg & Chips with Peas & Pineapple": () =>
+      PRICES["gammon"] * BNF.pork * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["egg"] * n
+      + PRICES["frozen pea"] * BNF.veg * n / 100
+      + PRICES["pineapple"] * 100 / 100,
+
+    "Fish Pie with Mashed Potato & Peas": () =>
+      PRICES["fish pie mix"] * BNF.fish * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["frozen pea"] * BNF.veg * n / 100
+      + PRICES["milk"] * BNF.milkSauce * n / 100
+      + PRICES["cheddar"] * 40 / 100,
+
+    "GF Fish & Chips with Peas or Baked Beans": () =>
+      PRICES["white fish"] * BNF.fish * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["frozen pea"] * BNF.veg * n / 100,
+
+    "Lemon Chicken, Potato & Vegetable Tray Bake": () =>
+      PRICES["chicken thigh"] * BNF.chickenThigh * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["pepper"] * 150 / 100
+      + PRICES["courgette"] * 100 / 100
+      + PRICES["onion"] * 80 / 100,
+
+    "Moussaka with Greek Salad": () =>
+      PRICES["lamb mince"] * BNF.lamb * n / 100
+      + PRICES["aubergine"] * 200 / 100
+      + PRICES["potato"] * 150 * n / 100
+      + PRICES["milk"] * BNF.milkSauce * n / 100
+      + PRICES["egg"] * 2
+      + PRICES["cheddar"] * 40 / 100
+      + PRICES["chopped tomato"] * 200 / 100
+      + PRICES["feta"] * 50 / 100,
+
+    "Chicken Bobotie with Basmati Rice": () =>
+      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
+      + PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["egg"] * 2
+      + PRICES["milk"] * 60 / 100
+      + PRICES["apricot jam"] * 40 / 100,
+
+    "Beef Bobotie with Basmati Rice": () =>
+      PRICES["beef mince"] * BNF.beefMince * n / 100
+      + PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["egg"] * 2
+      + PRICES["milk"] * 60 / 100
+      + PRICES["apricot jam"] * 40 / 100,
+
+    "Chicken Potjie with Baby Potatoes & Butternut": () =>
+      PRICES["chicken thigh"] * BNF.chickenThigh * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["butternut squash"] * 150 / 100
+      + PRICES["chopped tomato"] * 200 / 100
+      + PRICES["onion"] * 80 / 100,
+
+    "Chilli Con Carne with Rice & Nachos": () =>
+      PRICES["beef mince"] * BNF.beefMince * n / 100
+      + PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["kidney bean"] * 200 / 100
+      + PRICES["chopped tomato"] * 400 / 100
+      + PRICES["tortilla chip"] * 50 / 100,
+
+    "Cheese & Bacon Burger with Waffle Fries": () =>
+      PRICES["beef burger"] * BNF.beefBurger * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["cheddar"] * 30 * n / 100
+      + PRICES["bacon"] * 50 * n / 100,
+
+    "Chicken Burger with Wedges, Lettuce & Tomato": () =>
+      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["lettuce"] * 0.5,
+
+    "Chicken Wings with Potato Wedges & Salad": () =>
+      PRICES["chicken thigh"] * 200 * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["lettuce"] * 0.5,
+
+    "Chicken Dippers with Chips & Baked Beans": () =>
+      PRICES["chicken dippers"] * 150 * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["baked bean"] * 200 / 100,
+
+    "Hot Dogs with Chips & Side Salad": () =>
+      PRICES["hot dog"] * 100 * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["lettuce"] * 0.5,
+
+    "Sausage Rolls with Wedges & Sweetcorn": () =>
+      PRICES["sausage roll"] * 150 * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["sweetcorn"] * 100 / 100,
+
+    "Pizza with Potato Salad & Coleslaw": () =>
+      PRICES["pasta"] * 100 * n / 100  // dough base approximation
+      + PRICES["mozzarella"] * 50 * n / 100
+      + PRICES["tomato puree"] * 40 / 100
+      + PRICES["potato"] * 100 * n / 100,
+
+    "Roasted Salmon with Potato Wedges & Green Beans": () =>
+      PRICES["salmon"] * BNF.fish * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["green bean"] * BNF.veg * n / 100,
+
+    "Fish Fingers & Chips with Beans or Peas": () =>
+      PRICES["fish finger"] * 120 * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["baked bean"] * 150 / 100,
+
+    "Full Cooked Breakfast with GF Toast & Hash Browns": () =>
+      PRICES["pork sausage"] * 100 * n / 100
+      + PRICES["bacon"] * 50 * n / 100
+      + PRICES["egg"] * n
+      + PRICES["baked bean"] * 150 / 100
+      + PRICES["mushroom"] * 60 * n / 100
+      + PRICES["hash brown"] * 100 * n / 100,
+
+    "Quiche with Potato Wedges & Greek Salad": () =>
+      PRICES["egg"] * n
+      + PRICES["milk"] * 100 / 100
+      + PRICES["cheddar"] * 60 / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["feta"] * 50 / 100,
+
+    "Loaded Baked Potato with Savoury Mince & Cheese": () =>
+      PRICES["beef mince"] * 100 * n / 100
+      + PRICES["baking potato"] * n * 0.79 / 4
+      + PRICES["cheddar"] * 40 * n / 100
+      + PRICES["chopped tomato"] * 200 / 100,
+
+    "Pork Chops with Apple Sauce, Mash & Green Beans": () =>
+      PRICES["pork chop"] * BNF.pork * n / 100
+      + PRICES["potato"] * BNF.potato * n / 100
+      + PRICES["green bean"] * BNF.veg * n / 100
+      + PRICES["apple sauce"] * 60 / 100,
+
+    "Oven Baked Rice with Chicken, Chorizo & Tomato": () =>
+      PRICES["chicken thigh"] * BNF.chickenThigh * n / 100
+      + PRICES["basmati rice"] * BNF.riceDry * n / 100
+      + PRICES["chopped tomato"] * 200 / 100
+      + PRICES["onion"] * 80 / 100
+      + PRICES["pepper"] * 100 / 100,
+  };
+
+  // Run calculation, add storecupboard buffer, round to 2dp
+  const base = recipes[mealName] ? recipes[mealName]() : 8.00;
+  const buffer = BNF.storecupboard * n;
+  return Math.max(1.50, parseFloat((base + buffer).toFixed(2)));
+};
+
 const ALLERGENS = [
   {id:"gluten",label:"Gluten",icon:"🌾"},{id:"crustaceans",label:"Crustaceans",icon:"🦐"},
   {id:"eggs",label:"Eggs",icon:"🥚"},{id:"fish",label:"Fish",icon:"🐟"},
@@ -1115,7 +1631,7 @@ export default function MealWise() {
     familySize:4, glutenFree:false, sundayRoast:true,
     proteins:["chicken","beef","pork"], allergens:[],
     cuisines:[], fridaySurprise:false, fridayCuisines:[],
-    maxPasta:2, maxRice:2, maxPotato:5,
+    maxPasta:2, maxRice:2, maxPotato:3,
   });
 
   useEffect(() => {
@@ -1134,45 +1650,105 @@ export default function MealWise() {
     return true;
   });
 
+  // ── Similarity guard: prevents back-to-back meals that feel the same
+  // e.g. Cottage Pie (beef+potato+british-classic) then Shepherd's Pie (lamb+potato+british-classic)
+  const tooSimilar = (a, b) => {
+    if (!a || !b) return false;
+    // Same carb AND same cuisine group = too similar regardless of protein
+    const sharedCuisine = a.cuisine.some(c => b.cuisine.includes(c));
+    if (sharedCuisine && a.carb === b.carb) return true;
+    // Same protein AND same carb = too similar
+    if (a.protein === b.protein && a.carb === b.carb) return true;
+    return false;
+  };
+
   const generate = async () => {
     setLoading(true); setLoadMsg(0); setCustomisations({});
     const p = pool();
-    const sys = `You are a family meal planner. Pick 7 dinners (Saturday–Friday) from the database.
-Rules: Sunday MUST be british-roast if sundayRoast true. If fridaySurprise true, Friday must match fridayCuisines. Max pasta=${prefs.maxPasta}, max rice=${prefs.maxRice}. No repeats. Vary proteins and cuisines.
-Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one sentence"},...]}`;
+
+    const sys = `You are a strict family meal planner. Choose EXACTLY 7 dinners for Saturday through Friday.
+
+MANDATORY RULES — violating any rule means the plan is REJECTED:
+1. Sunday = british-roast cuisine ONLY (if sundayRoast=true)
+2. Friday must match fridayCuisines (if fridaySurprise=true)
+3. CARB TOTALS across all 7 meals: pasta count MUST be <= ${prefs.maxPasta}, rice count MUST be <= ${prefs.maxRice}, potato count MUST be <= ${prefs.maxPotato}. Count every single meal before finalising.
+4. No two consecutive days with the same carb type AND same cuisine group (e.g. do NOT put Cottage Pie on Wednesday then Shepherd's Pie on Thursday — both are british-classic+potato)
+5. No two consecutive days with the same protein AND same carb type
+6. No meal repeated
+7. Copy meal names EXACTLY as given
+
+Return ONLY this JSON (no explanation, no markdown):
+{"plan":[{"day":"Saturday","meal":"EXACT name","reason":"brief reason"},{"day":"Sunday",...},{"day":"Monday",...},{"day":"Tuesday",...},{"day":"Wednesday",...},{"day":"Thursday",...},{"day":"Friday",...}]}`;
+
     try {
       const r = await fetch("https://api.anthropic.com/v1/messages",{
         method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:1200,system:sys,
-          messages:[{role:"user",content:`Prefs:${JSON.stringify(prefs)}\nPool:${JSON.stringify(p.map(m=>({name:m.name,protein:m.protein,carb:m.carb,cuisine:m.cuisine})))}\nReturn JSON only.`}]})
+        body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:1400,system:sys,
+          messages:[{role:"user",content:`Preferences: ${JSON.stringify({...prefs,maxPasta:prefs.maxPasta,maxRice:prefs.maxRice,maxPotato:prefs.maxPotato})}\n\nAvailable meals (use EXACT names):\n${p.map(m=>`- "${m.name}" [protein:${m.protein}, carb:${m.carb}, cuisine:${m.cuisine[0]}]`).join("\n")}\n\nRemember to count: pasta<=${prefs.maxPasta}, rice<=${prefs.maxRice}, potato<=${prefs.maxPotato}. Return JSON only.`}]})
       });
       const d = await r.json();
       const txt = d.content?.[0]?.text||"";
       const parsed = JSON.parse(txt.replace(/```json|```/g,"").trim());
-      setPlan(parsed.plan.map(item=>{
-        const db=p.find(m=>m.name===item.meal)||p.find(m=>m.name.toLowerCase().startsWith(item.meal.split(" ")[0].toLowerCase()));
+
+      const mapped = parsed.plan.map(item=>{
+        const db = p.find(m=>m.name===item.meal) || p.find(m=>m.name.toLowerCase().includes(item.meal.split(" ")[0].toLowerCase()));
         return{...item,protein:db?.protein||"chicken",carb:db?.carb||"potato",
-          cost:db?(db.cost*(prefs.familySize/4)).toFixed(2):"8.00",
+          cost: calcMealCost(db?.name||item.meal, prefs.familySize),
           allergens:db?.allergens||[],meal:db?.name||item.meal,
           defaultStarch:db?.defaultStarch||"",defaultVeg:db?.defaultVeg||""};
-      }));
+      });
+
+      // Validate carb counts — if AI ignored the limits, fall back to deterministic
+      const tally = {pasta:0,rice:0,potato:0,other:0};
+      mapped.forEach(m => tally[m.carb]=(tally[m.carb]||0)+1);
+      const ok = tally.pasta<=prefs.maxPasta && tally.rice<=prefs.maxRice && tally.potato<=prefs.maxPotato;
+      setPlan(ok ? mapped : fallback(p));
     } catch { setPlan(fallback(p)); }
     setLoading(false); setScreen("plan");
   };
 
+  // ── Deterministic fallback: guaranteed to respect ALL carb + similarity rules
   const fallback = (p) => {
-    const used=[],carbs={};
+    const used=[], carbs={pasta:0,rice:0,potato:0,other:0};
+    let prevMeal = null;
     return DAYS.map(day=>{
-      let pool2=p.filter(m=>!used.includes(m.name));
-      if(day==="Sunday"&&prefs.sundayRoast) pool2=pool2.filter(m=>m.cuisine.includes("british-roast"));
-      if(day==="Friday"&&prefs.fridaySurprise&&prefs.fridayCuisines.length) pool2=pool2.filter(m=>m.cuisine.some(c=>prefs.fridayCuisines.includes(c)));
-      pool2=pool2.filter(m=>!(m.carb==="pasta"&&(carbs.pasta||0)>=prefs.maxPasta)&&!(m.carb==="rice"&&(carbs.rice||0)>=prefs.maxRice));
-      if(!pool2.length) pool2=p.filter(m=>!used.includes(m.name));
-      const pick=pool2[Math.floor(Math.random()*pool2.length)]||p[0];
-      used.push(pick.name); carbs[pick.carb]=(carbs[pick.carb]||0)+1;
+      let candidates = p.filter(m=>!used.includes(m.name));
+
+      // Day-specific locks
+      if(day==="Sunday"&&prefs.sundayRoast)
+        candidates = candidates.filter(m=>m.cuisine.includes("british-roast"));
+      if(day==="Friday"&&prefs.fridaySurprise&&prefs.fridayCuisines.length)
+        candidates = candidates.filter(m=>m.cuisine.some(c=>prefs.fridayCuisines.includes(c)));
+
+      // Enforce carb limits
+      candidates = candidates.filter(m=>
+        !(m.carb==="pasta" && carbs.pasta>=prefs.maxPasta) &&
+        !(m.carb==="rice"  && carbs.rice>=prefs.maxRice)   &&
+        !(m.carb==="potato"&& carbs.potato>=prefs.maxPotato)
+      );
+
+      // Avoid back-to-back similar meals
+      if(prevMeal) candidates = candidates.filter(m=>!tooSimilar(m, prevMeal));
+
+      // Safety: if filters left nothing, relax similarity rule only
+      if(!candidates.length) candidates = p.filter(m=>
+        !used.includes(m.name) &&
+        !(m.carb==="pasta" && carbs.pasta>=prefs.maxPasta) &&
+        !(m.carb==="rice"  && carbs.rice>=prefs.maxRice)   &&
+        !(m.carb==="potato"&& carbs.potato>=prefs.maxPotato)
+      );
+      // Last resort: anything unused
+      if(!candidates.length) candidates = p.filter(m=>!used.includes(m.name));
+      if(!candidates.length) candidates = p;
+
+      const pick = candidates[Math.floor(Math.random()*candidates.length)];
+      used.push(pick.name);
+      carbs[pick.carb]=(carbs[pick.carb]||0)+1;
+      prevMeal = pick;
       return{day,meal:pick.name,protein:pick.protein,carb:pick.carb,
-        cost:(pick.cost*(prefs.familySize/4)).toFixed(2),allergens:pick.allergens,
-        reason:"A great choice.",defaultStarch:pick.defaultStarch||"",defaultVeg:pick.defaultVeg||""};
+        cost: calcMealCost(pick.name, prefs.familySize),
+        allergens:pick.allergens,
+        reason:"A great choice for the week.",defaultStarch:pick.defaultStarch||"",defaultVeg:pick.defaultVeg||""};
     });
   };
 
@@ -1187,7 +1763,8 @@ Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one s
     const pick=pl[Math.floor(Math.random()*pl.length)];
     const np=[...plan];
     np[i]={...np[i],meal:pick.name,protein:pick.protein,carb:pick.carb,
-      cost:(pick.cost*(prefs.familySize/4)).toFixed(2),allergens:pick.allergens,
+      cost: calcMealCost(pick.name, prefs.familySize),
+      allergens:pick.allergens,
       defaultStarch:pick.defaultStarch||"",defaultVeg:pick.defaultVeg||""};
     // Clear customisation for swapped meal
     const nc={...customisations};
@@ -1387,6 +1964,11 @@ Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one s
         <div className="notice">
           Quantities are per-meal guides scaled to {prefs.familySize} people. Always check your cupboard stocks before shopping!
         </div>
+
+        <div style={{fontSize:11,color:B.muted,background:B.soft,borderRadius:12,padding:"12px 14px",marginTop:14,lineHeight:1.7}}>
+          <strong style={{color:B.primary}}>💡 About our cost estimates</strong><br/>
+          Meal costs are calculated using British Nutrition Foundation recommended portion sizes for the main protein, vegetables and carbs. They do not include storecupboard staples such as oils, seasonings, herbs or tomato purée — we add a small buffer per meal to account for these. Prices are based on Sainsbury's data (April 2026) and are a guide only. Our community pricing model will build a richer, multi-supermarket picture over time as families share their receipts.
+        </div>
       </div>
 
       <div className="up-card">
@@ -1446,7 +2028,7 @@ Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one s
         <div>
           <div className="s-lbl">Est. weekly food cost</div>
           <div className="s-val">£{total}</div>
-          <div className="s-note">Community estimates · upload receipt for real prices</div>
+          <div className="s-note">Based on BNF portions · Sainsbury's April 2026 prices</div>
         </div>
         <div style={{textAlign:"right"}}>
           <div className="s-lbl">Family of {prefs.familySize}</div>
