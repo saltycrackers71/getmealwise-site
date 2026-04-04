@@ -185,7 +185,7 @@ const MEALS = [
       {item:"Basmati rice",qty:"300g"},
       {item:"Teriyaki sauce",qty:"4 tbsp"},
       {item:"Broccoli",qty:"1 head"},
-      {item:"Peppers",qty:"2"},
+      {item:"Bell peppers",qty:"2"},
       {item:"Spring onions",qty:"4"},
       {item:"Sesame oil",qty:"1 tbsp"},
       {item:"Garlic",qty:"2 cloves"},
@@ -202,7 +202,7 @@ const MEALS = [
       {item:"Eggs",qty:"3"},
       {item:"Teriyaki sauce",qty:"4 tbsp"},
       {item:"Broccoli",qty:"1 head"},
-      {item:"Peppers",qty:"2"},
+      {item:"Bell peppers",qty:"2"},
       {item:"Sesame oil",qty:"1 tbsp"},
       {item:"Soy sauce",qty:"2 tbsp"},
     ],
@@ -229,7 +229,7 @@ const MEALS = [
       {item:"Basmati rice",qty:"300g"},
       {item:"Sweet & sour sauce",qty:"1 jar"},
       {item:"Prawn crackers",qty:"1 bag"},
-      {item:"Peppers",qty:"2"},
+      {item:"Bell peppers",qty:"2"},
       {item:"Pineapple chunks",qty:"1 small tin"},
       {item:"Onion",qty:"1"},
     ],
@@ -243,7 +243,9 @@ const MEALS = [
       {item:"Basmati rice",qty:"300g"},
       {item:"Sweet & sour sauce",qty:"1 jar"},
       {item:"Prawn crackers",qty:"1 bag"},
-      {item:"Peppers",qty:"2"},
+      {item:"Bell peppers",qty:"2",note:"For Sweet & Sour Pork"},
+      {item:"Courgette",qty:"1 medium",note:"For Sweet & Sour Pork"},
+      {item:"Mushrooms",qty:"150g",note:"For Sweet & Sour Pork"},
       {item:"Pineapple chunks",qty:"1 small tin"},
       {item:"Onion",qty:"1"},
     ],
@@ -273,7 +275,7 @@ const MEALS = [
       {item:"Tinned coconut milk",qty:"400ml"},
       {item:"Green beans",qty:"150g"},
       {item:"Baby spinach",qty:"80g"},
-      {item:"Lime",qty:"1"},
+      {item:"Lime",qty:"1",note:"For Thai green curry"},
       {item:"Fresh coriander",qty:"small bunch"},
     ],
   },
@@ -349,7 +351,7 @@ const MEALS = [
       {item:"Pork sausages",qty:"6–8"},
       {item:"Penne pasta",qty:"400g"},
       {item:"Tinned chopped tomatoes",qty:"2 tins"},
-      {item:"Peppers",qty:"2"},
+      {item:"Bell peppers",qty:"2"},
       {item:"Onion",qty:"1 large"},
       {item:"Garlic",qty:"3 cloves"},
       {item:"Tomato puree",qty:"2 tbsp"},
@@ -532,7 +534,7 @@ const MEALS = [
       {item:"GF breadcrumbs or batter mix",qty:"150g"},
       {item:"White potatoes or oven chips",qty:"800g"},
       {item:"Frozen peas or baked beans",qty:"200g / 1 tin"},
-      {item:"Lemon",qty:"1"},
+      {item:"Lemon",qty:"1",note:"For fish & chips"},
       {item:"Tartar sauce",qty:"to serve"},
     ],
   },
@@ -543,10 +545,10 @@ const MEALS = [
     ingredients:[
       {item:"Chicken thighs (bone-in)",qty:"8"},
       {item:"White potatoes",qty:"800g"},
-      {item:"Peppers",qty:"2"},
+      {item:"Bell peppers",qty:"2"},
       {item:"Courgette",qty:"1"},
       {item:"Red onion",qty:"1"},
-      {item:"Lemon",qty:"2"},
+      {item:"Lemon",qty:"2",note:"For lemon chicken tray bake"},
       {item:"Garlic",qty:"4 cloves"},
       {item:"Fresh thyme",qty:"small bunch"},
       {item:"Olive oil",qty:"3 tbsp"},
@@ -733,10 +735,7 @@ const MEALS = [
       {item:"Salmon fillets",qty:"4"},
       {item:"White potatoes for wedges",qty:"800g"},
       {item:"Green beans",qty:"200g"},
-      {item:"Lemon",qty:"1"},
-      {item:"Garlic",qty:"2 cloves"},
-      {item:"Olive oil",qty:"2 tbsp"},
-      {item:"Dill or parsley",qty:"small bunch"},
+      {item:"Lemon",qty:"1",note:"For roasted salmon"},
     ],
   },
   {
@@ -815,7 +814,7 @@ const MEALS = [
       {item:"Chorizo",qty:"150g"},
       {item:"Tinned chopped tomatoes",qty:"1 tin"},
       {item:"Chicken stock cube",qty:"1"},
-      {item:"Red pepper",qty:"1"},
+      {item:"Red bell pepper",qty:"1"},
       {item:"Onion",qty:"1"},
       {item:"Garlic",qty:"3 cloves"},
       {item:"Smoked paprika",qty:"1 tsp"},
@@ -1403,8 +1402,9 @@ const buildShoppingList = (plan) => {
     if (/milk|cream|butter|cheese|egg|yoghurt|feta|mozzarella|parmesan|cheddar/.test(i)) return "Dairy & Eggs";
     if (/frozen/.test(i)) return "Frozen";
     if (/bread|bun|roll|pastry|wrap|crackers|cracker/.test(i)) return "Bread, Pastry & Baked";
-    if (/sauce|oil|spice|herb|seasoning|salt|pepper|cumin|paprika|turmeric|thyme|rosemary|coriander|basil|dill|parsley|bay|cinnamon|mustard|ketchup|mayo|vinegar|puree|paste/.test(i)) return "Sauces, Spices & Condiments";
-    if (/onion|garlic|ginger|carrot|celery|pepper|courgette|aubergine|mushroom|spinach|lettuce|tomato|cucumber|lemon|lime|spring onion|butternut|squash|broccoli|cabbage|bean|pea|sweetcorn|salad|apple|pineapple/.test(i)) return "Fresh Vegetables & Salad";
+    // Fresh veg BEFORE sauces — peppers (bell/capsicum) must not match "pepper" spice
+    if (/onion|garlic|ginger|carrot|celery|bell pepper|capsicum|red pepper|green pepper|yellow pepper|courgette|aubergine|mushroom|spinach|lettuce|tomato|cucumber|lemon|lime|spring onion|butternut|squash|broccoli|cabbage|bean|pea|sweetcorn|salad|apple|pineapple|pepper/.test(i)) return "Fresh Vegetables & Salad";
+    if (/sauce|oil|spice|herb|seasoning|salt|cumin|paprika|turmeric|thyme|rosemary|coriander|basil|dill|parsley|bay|cinnamon|mustard|ketchup|mayo|vinegar|puree|paste/.test(i)) return "Sauces, Spices & Condiments";
     return "Other";
   };
 
@@ -1675,7 +1675,8 @@ MANDATORY RULES — violating any rule means the plan is REJECTED:
 4. No two consecutive days with the same carb type AND same cuisine group (e.g. do NOT put Cottage Pie on Wednesday then Shepherd's Pie on Thursday — both are british-classic+potato)
 5. No two consecutive days with the same protein AND same carb type
 6. No meal repeated
-7. Copy meal names EXACTLY as given
+7. Vary the default veg across the week — avoid the same default veg (e.g. peas) appearing more than twice across the 7 meals
+8. Copy meal names EXACTLY as given
 
 Return ONLY this JSON (no explanation, no markdown):
 {"plan":[{"day":"Saturday","meal":"EXACT name","reason":"brief reason"},{"day":"Sunday",...},{"day":"Monday",...},{"day":"Tuesday",...},{"day":"Wednesday",...},{"day":"Thursday",...},{"day":"Friday",...}]}`;
@@ -1709,7 +1710,7 @@ Return ONLY this JSON (no explanation, no markdown):
 
   // ── Deterministic fallback: guaranteed to respect ALL carb + similarity rules
   const fallback = (p) => {
-    const used=[], carbs={pasta:0,rice:0,potato:0,other:0};
+    const used=[], carbs={pasta:0,rice:0,potato:0,other:0}, vegCount={};
     let prevMeal = null;
     return DAYS.map(day=>{
       let candidates = p.filter(m=>!used.includes(m.name));
@@ -1730,20 +1731,24 @@ Return ONLY this JSON (no explanation, no markdown):
       // Avoid back-to-back similar meals
       if(prevMeal) candidates = candidates.filter(m=>!tooSimilar(m, prevMeal));
 
-      // Safety: if filters left nothing, relax similarity rule only
+      // Avoid same default veg more than twice across the week
+      const vegFiltered = candidates.filter(m=>!m.defaultVeg||(vegCount[m.defaultVeg]||0)<2);
+      if(vegFiltered.length) candidates = vegFiltered;
+
+      // Safety: relax similarity rule if needed
       if(!candidates.length) candidates = p.filter(m=>
         !used.includes(m.name) &&
         !(m.carb==="pasta" && carbs.pasta>=prefs.maxPasta) &&
         !(m.carb==="rice"  && carbs.rice>=prefs.maxRice)   &&
         !(m.carb==="potato"&& carbs.potato>=prefs.maxPotato)
       );
-      // Last resort: anything unused
       if(!candidates.length) candidates = p.filter(m=>!used.includes(m.name));
       if(!candidates.length) candidates = p;
 
       const pick = candidates[Math.floor(Math.random()*candidates.length)];
       used.push(pick.name);
       carbs[pick.carb]=(carbs[pick.carb]||0)+1;
+      if(pick.defaultVeg) vegCount[pick.defaultVeg]=(vegCount[pick.defaultVeg]||0)+1;
       prevMeal = pick;
       return{day,meal:pick.name,protein:pick.protein,carb:pick.carb,
         cost: calcMealCost(pick.name, prefs.familySize),
@@ -1809,7 +1814,43 @@ Return ONLY this JSON (no explanation, no markdown):
     } catch { setAiMsg("ok:Looks great — we'll review it shortly!"); }
   };
 
-  const total = plan?plan.reduce((s,m)=>s+parseFloat(m.cost),0).toFixed(2):0;
+  // ── Veg cost adjustments when user changes default veg ──
+  // Maps VEG_OPTIONS to approximate cost delta vs "no veg" baseline (£ for family)
+  const VEG_COSTS = {
+    "Frozen Peas":            n => PRICES["frozen pea"]  * BNF.veg * n / 100,
+    "Green Beans":            n => PRICES["green bean"]  * BNF.veg * n / 100,
+    "Broccoli":               n => PRICES["broccoli"]    * BNF.veg * n / 100,
+    "Carrots":                n => PRICES["carrot"]      * BNF.veg * n / 100,
+    "Sweetcorn":              n => PRICES["sweetcorn"]   * 100      / 100,
+    "Cabbage":                n => PRICES["cabbage"]     * BNF.veg * n / 100,
+    "Cauliflower":            n => PRICES["broccoli"]    * BNF.veg * n / 100, // similar price
+    "Spinach":                n => PRICES["spinach"]     * BNF.veg * n / 100,
+    "Mixed Salad":            n => PRICES["lettuce"]     * 0.5,
+    "Greek Salad":            n => PRICES["feta"]        * 50 / 100 + PRICES["cucumber"] * 0.3,
+    "Roasted Mediterranean Veg": n => PRICES["courgette"] * 100/100 + PRICES["pepper"] * 100/100,
+    "Courgette":              n => PRICES["courgette"]   * BNF.veg * n / 100,
+    "Leeks":                  n => PRICES["onion"]       * BNF.veg * n / 100, // similar price
+    "Frozen Mixed Veg":       n => PRICES["frozen pea"]  * BNF.veg * n / 100,
+    "Baked Beans":            n => PRICES["baked bean"]  * 150      / 100,
+    "No veg":                 n => 0,
+  };
+
+  // Returns the displayed cost for a meal card — base cost ± veg swap delta
+  const displayCost = (item, idx) => {
+    const custom = customisations[idx] || {};
+    const baseVeg  = item.defaultVeg;
+    const chosenVeg = custom.veg || baseVeg;
+    const n = prefs.familySize;
+    if (chosenVeg === baseVeg) return parseFloat(item.cost);
+    // Add cost of new veg, subtract cost of default veg
+    const newVegCost  = VEG_COSTS[chosenVeg]  ? VEG_COSTS[chosenVeg](n)  : 0;
+    const baseVegCost = VEG_COSTS[baseVeg]    ? VEG_COSTS[baseVeg](n)    : 0;
+    return Math.max(1.50, parseFloat((parseFloat(item.cost) + newVegCost - baseVegCost).toFixed(2)));
+  };
+
+  const total = plan
+    ? plan.reduce((s, m, i) => s + displayCost(m, i), 0).toFixed(2)
+    : 0;
 
   // ── Recipe search: DuckDuckGo as primary (opens correctly), BBC Good Food & Pinch of Nom as direct links
   // Allergen modifier appended when relevant
@@ -2114,7 +2155,7 @@ Return ONLY this JSON (no explanation, no markdown):
           </div>
 
           <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6,flexShrink:0,marginLeft:10}}>
-            <div className="m-cost">~£{item.cost}</div>
+            <div className="m-cost">~£{displayCost(item, i).toFixed(2)}</div>
             <button className="sw-btn" disabled={swapping===i} onClick={()=>swap(i)}>{swapping===i?"...":"↺ Swap"}</button>
           </div>
         </div>
