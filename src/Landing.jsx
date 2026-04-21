@@ -35,7 +35,7 @@ const FEATURES = [
     desc:"Real pricing data, popular meal swaps, trending recipes and new additions — straight to your inbox every week. Built from community data, for the community." },
 ];
 
-const KIT_FORM_ID = "32ef1c922f";
+const KIT_FORM_ID = "b842e5cbf2";
 
 const CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=Outfit:wght@300;400;500;600&display=swap');
@@ -182,30 +182,32 @@ export default function Landing() {
   const [palVotes, setPalVotes] = useState({ A:41, B:28, C:19 });
   const totalVotes = Object.values(palVotes).reduce((a,b)=>a+b,0);
 
+  const submitToKit = async (emailAddr) => {
+    try {
+      await fetch(`https://app.kit.com/forms/${KIT_FORM_ID}/subscriptions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ email_address: emailAddr }).toString(),
+      });
+    } catch (e) {
+      console.log("Kit submission error:", e);
+    }
+  };
+
   const joinWaitlist = async () => {
     if (!email || !gdpr) return;
     const num = Math.floor(Math.random() * 12) + 248;
     setMemberNum(num);
     setJoined(true);
     if (!voteEmail) setVoteEmail(email);
-    // Kit form submission — replace KIT_FORM_ID with your real ID
-    if (KIT_FORM_ID !== "REPLACE_WITH_KIT_FORM_ID") {
-      try {
-        await fetch(`https://app.kit.com/forms/${KIT_FORM_ID}/subscriptions`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email_address: email }),
-        });
-      } catch (e) {
-        console.log("Kit submission error:", e);
-      }
-    }
+    await submitToKit(email);
   };
 
-  const submitVote = () => {
+  const submitVote = async () => {
     if (!palette || !voteEmail || !voteGdpr) return;
     setPalVotes(p => ({ ...p, [palette]: p[palette] + 1 }));
     setVoted(true);
+    await submitToKit(voteEmail);
   };
 
   return (
