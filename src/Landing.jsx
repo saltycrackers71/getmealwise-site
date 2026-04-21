@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { gtagEvent } from "./CookieBanner";
 
 const B = {
   primary:"#1B5E50", primary2:"#14463C", accent:"#F4A726", accent2:"#E09415",
@@ -199,6 +200,7 @@ export default function Landing() {
     const num = Math.floor(Math.random() * 12) + 248;
     setMemberNum(num);
     setJoined(true);
+    gtagEvent("email_signup");
     if (!voteEmail) setVoteEmail(email);
     await submitToKit(email);
   };
