@@ -110,6 +110,9 @@ const SUPERMARKETS = ["Sainsbury's","Tesco","ASDA","Morrisons","Aldi","Lidl","Wa
 const DAYS = ["Saturday","Sunday","Monday","Tuesday","Wednesday","Thursday","Friday"];
 const pIcon = {chicken:"🍗",beef:"🥩",pork:"🐷",lamb:"🫘",fish:"🐟",veggie:"🥦"};
 const cIcon = {pasta:"🍝 Pasta",rice:"🍚 Rice",potato:"🥔 Potato",other:"🥗 Other"};
+const FEEDBACK_WEBHOOK    = "https://script.google.com/macros/s/AKfycbx61QcQxS5188jM6ctu_xjWfJEJ2u65CGUgdzcA-pCO2OzMRtDy2xQOy0aiu6Yzluhc/exec";
+const SUGGESTIONS_WEBHOOK = "https://script.google.com/macros/s/AKfycbx61QcQxS5188jM6ctu_xjWfJEJ2u65CGUgdzcA-pCO2OzMRtDy2xQOy0aiu6Yzluhc/exec";
+
 const LOAD_MSGS = [
   "Searching 2.5 years of real family meal data...",
   "Making sure no pasta twice in a row...",
@@ -272,6 +275,7 @@ export default function MealWise() {
   const [swapping, setSwapping] = useState(null);
   const [recipeOpen, setRecipeOpen] = useState(null);
   const [supers, setSupers] = useState([]);
+  const [postcode, setPostcode] = useState("");
   const [email, setEmail] = useState("");
   const [gdpr, setGdpr] = useState(false);
   const [stars, setStars] = useState(0);
@@ -332,6 +336,16 @@ Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one s
       }));
     } catch { setPlan(fallback(p)); }
     setLoading(false); setScreen("plan");
+    fetch(FEEDBACK_WEBHOOK, {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        sheet:"Usage", timestamp:new Date().toISOString(),
+        postcode_area:postcode, supermarket:supers[0]||"",
+        family_size:prefs.familySize,
+        allergens_selected:prefs.allergens,
+        plan_generated:true,
+      }),
+    }).catch(e=>console.log("Usage ping error:",e));
   };
 
   const fallback = (p) => {
@@ -396,6 +410,37 @@ Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one s
     } catch { setAiMsg("ok:Looks great — we'll review it shortly!"); }
   };
 
+  const submitFeedback = async () => {
+    setFbSent(true);
+    try {
+      await fetch(FEEDBACK_WEBHOOK, {
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          sheet:"Feedback", timestamp:new Date().toISOString(),
+          stars, feedback_text:feedback,
+          family_size:prefs.familySize,
+          postcode_area:postcode, supermarket:supers[0]||"",
+        }),
+      });
+    } catch(e) { console.log("Feedback webhook error:",e); }
+  };
+
+  const submitSuggestion = async () => {
+    setSugSent(true);
+    try {
+      await fetch(SUGGESTIONS_WEBHOOK, {
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          sheet:"Suggestions", timestamp:new Date().toISOString(),
+          meal_name:sug.name, protein_type:sug.protein,
+          cuisine:sug.cuisine, notes:sug.notes,
+          family_size:prefs.familySize,
+          postcode_area:postcode, supermarket:supers[0]||"",
+        }),
+      });
+    } catch(e) { console.log("Suggestions webhook error:",e); }
+  };
+
   const total = plan?plan.reduce((s,m)=>s+parseFloat(m.cost),0).toFixed(2):0;
 
   const cleanMealName = (meal) => meal.split(/\swith\s/i)[0].split(",")[0].trim();
@@ -455,7 +500,8 @@ Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one s
         <div className="fb-s">Every suggestion gets read and tracked — popular requests get built.</div>
         <div className="stars">{[1,2,3,4,5].map(n=><span key={n} className={`star${stars>=n?" on":""}`} onClick={()=>setStars(n)}>★</span>)}</div>
         <textarea className="fb-area" placeholder="What did you love? What's missing? Any cuisines or meals you'd like added? Your ideas here get counted weekly and the most popular ones get built — we'll even announce it in the newsletter when we do!" value={feedback} onChange={e=>setFeedback(e.target.value)}/>
-        <button className="cta" style={{marginTop:12}} disabled={!feedback.trim()&&stars===0} onClick={()=>setFbSent(true)}>Send feedback →</button>
+        <button className="cta" style={{marginTop:12}} disabled={(!feedback.trim()&&stars===0)||fbSent} onClick={submitFeedback}>Send feedback →</button>
+        {fbSent&&<div style={{fontSize:12,color:B.success,marginTop:8,background:B.successBg,borderRadius:8,padding:"6px 10px"}}>✓ Feedback sent! Thank you — it shapes what we build next.</div>}
       </div>
       <div className="sug-card">
         <div className="sug-h">Suggest a meal for the community</div>
@@ -470,7 +516,7 @@ Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one s
           {aiMsg.startsWith("ok")?"✓ "+aiMsg.slice(3):aiMsg.startsWith("no")?"✗ "+aiMsg.slice(3):""}
         </div>
         <button className="cta ghost" style={{marginTop:8,fontSize:13,padding:"9px 14px"}} onClick={checkSug} disabled={!sug.name.trim()}>Check with AI →</button>
-        <button className="cta" style={{marginTop:6,fontSize:13,padding:"9px 14px"}} disabled={!sug.name.trim()||!aiMsg.startsWith("ok")} onClick={()=>setSugSent(true)}>Submit for review →</button>
+        <button className="cta" style={{marginTop:6,fontSize:13,padding:"9px 14px"}} disabled={!sug.name.trim()||!aiMsg.startsWith("ok")||sugSent} onClick={submitSuggestion}>Submit for review →</button>
         {sugSent&&<div style={{fontSize:12,color:B.success,marginTop:8,background:B.successBg,borderRadius:8,padding:"6px 10px"}}>✓ Submitted! We'll review and add it if approved.</div>}
       </div>
       <button className="cta amber" onClick={()=>setScreen("success")}>Finish & see my summary →</button>
@@ -506,6 +552,7 @@ Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one s
         <div className="sup-grid">
           {SUPERMARKETS.map(s=><div key={s} className={`sup-c${supers.includes(s)?" on":""}`} onClick={()=>setSupers(p=>p.includes(s)?p.filter(x=>x!==s):[...p,s])}>{s}</div>)}
         </div>
+        <input className="e-inp" placeholder="Your postcode area (e.g. ST4) — helps us map UK meal costs" value={postcode} onChange={e=>setPostcode(e.target.value.toUpperCase())}/>
         <input className="e-inp" type="email" placeholder="Your email address" value={email} onChange={e=>setEmail(e.target.value)}/>
         <div className="gdpr">
           <input type="checkbox" checked={gdpr} onChange={e=>setGdpr(e.target.checked)}/>
