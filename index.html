@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="GetMealWise — Smart family meal planning powered by community. AI-powered weekly meal plans with allergen filtering and UK supermarket price comparison. Free forever." />
+    <meta name="keywords" content="meal planner, family meals, gluten free meals, UK meal planning, weekly dinner ideas, allergen free meals" />
     <meta property="og:title" content="GetMealWise — Smart Family Meal Planning" />
     <meta property="og:description" content="AI-powered weekly meal plans with allergen filtering and UK supermarket price comparison. Free forever." />
     <meta property="og:url" content="https://getmealwise.co.uk" />
@@ -12,6 +13,16 @@
     <meta name="twitter:title" content="GetMealWise — Smart Family Meal Planning" />
     <meta name="twitter:description" content="AI-powered weekly meal plans with allergen filtering and UK supermarket price comparison. Free forever." />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Replace G-XXXXXXXXXX with real Measurement ID -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      if (localStorage.getItem('gmw_cookie_consent') === 'accepted') {
+        gtag('config', 'G-XXXXXXXXXX');
+      }
+    </script>
     <title>GetMealWise — Smart Family Meal Planning</title>
   </head>
   <body>
