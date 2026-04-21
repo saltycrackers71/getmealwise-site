@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from "react";
+import { gtagEvent } from "./CookieBanner";
 
 // ─── BRAND TOKENS (Option C — Friendly Community) ────────────────────────────
 const B = {
@@ -336,6 +337,7 @@ Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one s
       }));
     } catch { setPlan(fallback(p)); }
     setLoading(false); setScreen("plan");
+    gtagEvent("plan_generated", { family_size: prefs.familySize, allergens_count: prefs.allergens.length });
     fetch(FEEDBACK_WEBHOOK, {
       method:"POST", headers:{"Content-Type":"application/json"},
       body:JSON.stringify({
@@ -376,10 +378,12 @@ Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one s
     np[i]={...np[i],meal:pick.name,protein:pick.protein,carb:pick.carb,
       cost:(pick.cost*(prefs.familySize/4)).toFixed(2),allergens:pick.allergens};
     setPlan(np); setSwapping(null);
+    gtagEvent("meal_swapped", { meal_name: pick.name });
   };
 
   const searchFridge = async () => {
     if(!fridge.trim()) return;
+    gtagEvent("fridge_tool_used");
     setFridgeLoading(true);
     try {
       const r = await fetch("https://api.anthropic.com/v1/messages",{
@@ -412,6 +416,7 @@ Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one s
 
   const submitFeedback = async () => {
     setFbSent(true);
+    gtagEvent("feedback_submitted", { stars });
     try {
       await fetch(FEEDBACK_WEBHOOK, {
         method:"POST", headers:{"Content-Type":"application/json"},
@@ -646,7 +651,7 @@ Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one s
           </div>
         </div>
       ))}
-      <button className="cta amber" onClick={()=>setScreen("shopping")}>✓ Approve plan & build shopping list</button>
+      <button className="cta amber" onClick={()=>{setScreen("shopping");gtagEvent("shopping_list_viewed");}}>✓ Approve plan & build shopping list</button>
       <button className="cta ghost" style={{marginTop:8}} onClick={generate}>↺ Generate completely new plan</button>
     </div></>
   );
@@ -723,6 +728,27 @@ Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one s
           <div className="tog-wrap row" onClick={()=>setPrefs(p=>({...p,glutenFree:!p.glutenFree,allergens:!p.glutenFree?[...new Set([...p.allergens,"gluten"])]:p.allergens.filter(a=>a!=="gluten")}))}>
             <div className={`tog${prefs.glutenFree?" on":""}`}><div className="tog-k"/></div>
             <div><div className="tog-lbl">Gluten free meals only 🌾</div><div className="tog-sub">Filters out all gluten-containing meals</div></div>
+          </div>
+        </div>
+        <div style={{background:B.softAmber,border:`1.5px solid ${B.accent}`,borderRadius:20,padding:24,marginBottom:14}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
+            <span style={{fontSize:20}}>⚠️</span>
+            <div style={{fontFamily:"'Fraunces',serif",fontSize:18,fontWeight:600,color:B.text}}>Nut Allergy</div>
+          </div>
+          <div style={{fontSize:12,color:"#92600A",marginBottom:14,lineHeight:1.5}}>
+            Nut allergies can be severe. Select all that apply to filter every meal suggestion.
+          </div>
+          {[{id:"peanuts",label:"Peanuts",icon:"🥜"},{id:"nuts",label:"Tree Nuts",icon:"🌰"}].map(a=>(
+            <div key={a.id} className="tog-wrap row" onClick={()=>tog("allergens",a.id)}>
+              <div className={`tog${prefs.allergens.includes(a.id)?" on":""}`} style={prefs.allergens.includes(a.id)?{background:B.danger}:{}}><div className="tog-k"/></div>
+              <div>
+                <div className="tog-lbl">{a.icon} {a.label}</div>
+                <div className="tog-sub">{prefs.allergens.includes(a.id)?"Excluded from all meal suggestions":"Tap to exclude from meal suggestions"}</div>
+              </div>
+            </div>
+          ))}
+          <div style={{fontSize:11,color:"#92600A",marginTop:12,background:"rgba(244,167,38,0.18)",borderRadius:8,padding:"8px 10px",lineHeight:1.55}}>
+            ⚠ We filter meals but always check recipe ingredients if you have a severe allergy.
           </div>
         </div>
         <div className="card">
