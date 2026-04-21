@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Landing from './Landing'
 import App from './App'
+import CookieBanner from './CookieBanner'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -12,6 +13,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/app" element={<App />} />
         <Route path="/app/*" element={<App />} />
       </Routes>
+      <CookieBanner />
     </BrowserRouter>
   </React.StrictMode>
 )
