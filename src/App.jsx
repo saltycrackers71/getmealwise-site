@@ -21,1322 +21,62 @@ const B = {
   successBg: "#DCFCE7",
 };
 
-// ─── STARCH & VEG OPTIONS FOR MEAL CUSTOMISATION ─────────────────────────────
-const STARCH_OPTIONS = [
-  "Roast Potatoes","Mashed Potato","Potato Wedges","Boiled Potatoes",
-  "Chips / Fries","Jacket Potato","Basmati Rice","Egg Fried Rice",
-  "Pilau Rice","Jasmine Rice","Spaghetti","Penne","Tagliatelle",
-  "Garlic Bread","Naan Bread","Chapati","No starch",
-];
-const VEG_OPTIONS = [
-  "Frozen Peas","Green Beans","Broccoli","Carrots","Sweetcorn",
-  "Cabbage","Cauliflower","Spinach","Mixed Salad","Greek Salad",
-  "Roasted Mediterranean Veg","Courgette","Leeks","Frozen Mixed Veg",
-  "Baked Beans","No veg",
-];
-
-// ─── MEAL DATABASE ─────────────────────────────────────────────────────────────
-// Each meal now has:
-//   ingredients: array of {item, qty, note?} for the shopping list
-//   defaultStarch / defaultVeg: what comes with the meal as standard
+// ─── MEAL DATABASE ────────────────────────────────────────────────────────────
 const MEALS = [
-  {
-    name:"Roast Chicken with Roast Potatoes, Yorkshire & Gravy",
-    protein:"chicken", carb:"potato", cuisine:["british-roast"], gf:true, allergens:["celery"], cost:9.50,
-    defaultStarch:"Roast Potatoes", defaultVeg:"Frozen Peas",
-    ingredients:[
-      {item:"Whole chicken",qty:"1 (approx 1.5kg)",note:"Main protein"},
-      {item:"White potatoes",qty:"1kg"},
-      {item:"Yorkshire pudding mix",qty:"1 pack"},
-      {item:"GF gravy granules",qty:"1 tbsp"},
-      {item:"Frozen peas",qty:"200g"},
-      {item:"Carrots",qty:"3 medium"},
-      {item:"Fresh thyme & rosemary",qty:"small bunch"},
-      {item:"Olive oil",qty:"2 tbsp"},
-      {item:"Butter",qty:"25g"},
-    ],
-  },
-  {
-    name:"Roast Pork with Apple Sauce, Roast Potatoes & Veg",
-    protein:"pork", carb:"potato", cuisine:["british-roast"], gf:true, allergens:["celery"], cost:9.50,
-    defaultStarch:"Roast Potatoes", defaultVeg:"Cabbage",
-    ingredients:[
-      {item:"Pork shoulder / loin joint",qty:"1.2kg",note:"Roasting joint"},
-      {item:"White potatoes",qty:"1kg"},
-      {item:"Apple sauce",qty:"1 jar"},
-      {item:"GF gravy granules",qty:"1 tbsp"},
-      {item:"Cabbage",qty:"½ head"},
-      {item:"Carrots",qty:"3 medium"},
-      {item:"Olive oil",qty:"2 tbsp"},
-    ],
-  },
-  {
-    name:"Roast Lamb with Roast Potatoes, Cabbage & Peas",
-    protein:"lamb", carb:"potato", cuisine:["british-roast"], gf:true, allergens:["celery"], cost:12.00,
-    defaultStarch:"Roast Potatoes", defaultVeg:"Frozen Peas",
-    ingredients:[
-      {item:"Lamb leg joint",qty:"1.2–1.5kg",note:"Roasting joint — NOT minced lamb"},
-      {item:"White potatoes",qty:"1kg"},
-      {item:"Cabbage",qty:"½ head"},
-      {item:"Frozen peas",qty:"200g"},
-      {item:"Mint sauce",qty:"1 jar"},
-      {item:"GF gravy granules",qty:"1 tbsp"},
-      {item:"Garlic",qty:"4 cloves"},
-      {item:"Fresh rosemary",qty:"small bunch"},
-      {item:"Olive oil",qty:"2 tbsp"},
-    ],
-  },
-  {
-    name:"Chicken & Vegetable Curry with Basmati Rice",
-    protein:"chicken", carb:"rice", cuisine:["curry","indian"], gf:true, allergens:[], cost:8.00,
-    defaultStarch:"Basmati Rice", defaultVeg:"Mixed Salad",
-    ingredients:[
-      {item:"Chicken breast or thigh",qty:"600g"},
-      {item:"Basmati rice",qty:"300g"},
-      {item:"Curry paste (mild or medium)",qty:"3 tbsp"},
-      {item:"Tinned chopped tomatoes",qty:"1 tin"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Garlic",qty:"3 cloves"},
-      {item:"Fresh ginger",qty:"thumb-sized piece"},
-      {item:"Mixed frozen veg or fresh peppers",qty:"200g"},
-      {item:"Olive oil",qty:"2 tbsp"},
-    ],
-  },
-  {
-    name:"Butter Chicken Curry with Basmati Rice",
-    protein:"chicken", carb:"rice", cuisine:["curry","indian"], gf:true, allergens:["milk"], cost:9.00,
-    defaultStarch:"Basmati Rice", defaultVeg:"No veg",
-    ingredients:[
-      {item:"Chicken breast",qty:"600g"},
-      {item:"Basmati rice",qty:"300g"},
-      {item:"Butter chicken sauce / paste",qty:"1 jar or 3 tbsp"},
-      {item:"Double cream",qty:"100ml"},
-      {item:"Tinned chopped tomatoes",qty:"1 tin"},
-      {item:"Butter",qty:"25g"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Garlic",qty:"3 cloves"},
-    ],
-  },
-  {
-    name:"Chicken Tikka Masala with Pilau Rice",
-    protein:"chicken", carb:"rice", cuisine:["curry","indian"], gf:true, allergens:["milk"], cost:9.50,
-    defaultStarch:"Pilau Rice", defaultVeg:"No veg",
-    ingredients:[
-      {item:"Chicken breast",qty:"600g"},
-      {item:"Basmati rice",qty:"300g"},
-      {item:"Tikka masala paste",qty:"3 tbsp"},
-      {item:"Tinned coconut milk or double cream",qty:"200ml"},
-      {item:"Tinned chopped tomatoes",qty:"1 tin"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Garlic",qty:"3 cloves"},
-      {item:"Pilau rice spice mix",qty:"1 tsp"},
-    ],
-  },
-  {
-    name:"Beef Curry with Basmati Rice",
-    protein:"beef", carb:"rice", cuisine:["curry","indian"], gf:true, allergens:[], cost:10.00,
-    defaultStarch:"Basmati Rice", defaultVeg:"No veg",
-    ingredients:[
-      {item:"Beef braising steak",qty:"600g"},
-      {item:"Basmati rice",qty:"300g"},
-      {item:"Curry paste",qty:"3 tbsp"},
-      {item:"Tinned chopped tomatoes",qty:"1 tin"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Garlic",qty:"3 cloves"},
-      {item:"Beef stock cube",qty:"1"},
-    ],
-  },
-  {
-    name:"Lamb Curry with Basmati Rice",
-    protein:"lamb", carb:"rice", cuisine:["curry","indian"], gf:false, allergens:["gluten","milk"], cost:11.00,
-    defaultStarch:"Basmati Rice", defaultVeg:"No veg",
-    ingredients:[
-      {item:"Lamb shoulder, diced",qty:"600g",note:"Diced lamb — NOT a roasting joint"},
-      {item:"Basmati rice",qty:"300g"},
-      {item:"Curry paste",qty:"3 tbsp"},
-      {item:"Natural yoghurt",qty:"150ml"},
-      {item:"Tinned chopped tomatoes",qty:"1 tin"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Garlic",qty:"3 cloves"},
-      {item:"Fresh ginger",qty:"thumb-sized piece"},
-    ],
-  },
-  {
-    name:"Vegetable Curry with Basmati Rice",
-    protein:"veggie", carb:"rice", cuisine:["curry","indian"], gf:false, allergens:["gluten"], cost:6.50,
-    defaultStarch:"Basmati Rice", defaultVeg:"No veg",
-    ingredients:[
-      {item:"Mixed vegetables (fresh or frozen)",qty:"500g"},
-      {item:"Basmati rice",qty:"300g"},
-      {item:"Curry paste",qty:"3 tbsp"},
-      {item:"Tinned chopped tomatoes",qty:"1 tin"},
-      {item:"Tinned chickpeas",qty:"1 tin"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Garlic",qty:"3 cloves"},
-      {item:"Spinach",qty:"80g"},
-    ],
-  },
-  {
-    name:"Chicken Teriyaki Stir Fry with Basmati Rice",
-    protein:"chicken", carb:"rice", cuisine:["asian","japanese"], gf:true, allergens:["soya","sesame"], cost:8.50,
-    defaultStarch:"Basmati Rice", defaultVeg:"Broccoli",
-    ingredients:[
-      {item:"Chicken breast, sliced",qty:"600g"},
-      {item:"Basmati rice",qty:"300g"},
-      {item:"Teriyaki sauce",qty:"4 tbsp"},
-      {item:"Broccoli",qty:"1 head"},
-      {item:"Bell peppers",qty:"2"},
-      {item:"Spring onions",qty:"4"},
-      {item:"Sesame oil",qty:"1 tbsp"},
-      {item:"Garlic",qty:"2 cloves"},
-      {item:"Sesame seeds",qty:"1 tbsp"},
-    ],
-  },
-  {
-    name:"Beef Teriyaki Stir Fry with Egg Fried Rice",
-    protein:"beef", carb:"rice", cuisine:["asian","japanese"], gf:true, allergens:["soya","eggs","sesame"], cost:10.00,
-    defaultStarch:"Egg Fried Rice", defaultVeg:"Broccoli",
-    ingredients:[
-      {item:"Beef sirloin or stir fry strips",qty:"500g"},
-      {item:"Basmati rice",qty:"300g"},
-      {item:"Eggs",qty:"3"},
-      {item:"Teriyaki sauce",qty:"4 tbsp"},
-      {item:"Broccoli",qty:"1 head"},
-      {item:"Bell peppers",qty:"2"},
-      {item:"Sesame oil",qty:"1 tbsp"},
-      {item:"Soy sauce",qty:"2 tbsp"},
-    ],
-  },
-  {
-    name:"Pork & Veg Stir Fry with Teriyaki & Rice",
-    protein:"pork", carb:"rice", cuisine:["asian"], gf:true, allergens:["soya","sesame"], cost:8.00,
-    defaultStarch:"Basmati Rice", defaultVeg:"Mixed Salad",
-    ingredients:[
-      {item:"Pork fillet or stir fry strips",qty:"500g"},
-      {item:"Basmati rice",qty:"300g"},
-      {item:"Teriyaki sauce",qty:"4 tbsp"},
-      {item:"Mixed stir fry veg",qty:"300g"},
-      {item:"Sesame oil",qty:"1 tbsp"},
-      {item:"Garlic",qty:"2 cloves"},
-    ],
-  },
-  {
-    name:"Sweet & Sour Chicken with Rice & Prawn Crackers",
-    protein:"chicken", carb:"rice", cuisine:["asian","chinese"], gf:true, allergens:["crustaceans"], cost:8.00,
-    defaultStarch:"Basmati Rice", defaultVeg:"No veg",
-    ingredients:[
-      {item:"Chicken breast, diced",qty:"600g"},
-      {item:"Basmati rice",qty:"300g"},
-      {item:"Sweet & sour sauce",qty:"1 jar"},
-      {item:"Prawn crackers",qty:"1 bag"},
-      {item:"Bell peppers",qty:"2"},
-      {item:"Pineapple chunks",qty:"1 small tin"},
-      {item:"Onion",qty:"1"},
-    ],
-  },
-  {
-    name:"Sweet & Sour Pork with Rice & Prawn Crackers",
-    protein:"pork", carb:"rice", cuisine:["asian","chinese"], gf:true, allergens:["crustaceans"], cost:8.00,
-    defaultStarch:"Basmati Rice", defaultVeg:"No veg",
-    ingredients:[
-      {item:"Pork tenderloin or loin, diced",qty:"500g"},
-      {item:"Basmati rice",qty:"300g"},
-      {item:"Sweet & sour sauce",qty:"1 jar"},
-      {item:"Prawn crackers",qty:"1 bag"},
-      {item:"Bell peppers",qty:"2",note:"For Sweet & Sour Pork"},
-      {item:"Courgette",qty:"1 medium",note:"For Sweet & Sour Pork"},
-      {item:"Mushrooms",qty:"150g",note:"For Sweet & Sour Pork"},
-      {item:"Pineapple chunks",qty:"1 small tin"},
-      {item:"Onion",qty:"1"},
-    ],
-  },
-  {
-    name:"Prawn & Vegetable Stir Fry with Egg Fried Rice",
-    protein:"fish", carb:"rice", cuisine:["asian","chinese"], gf:true, allergens:["crustaceans","eggs","soya"], cost:10.00,
-    defaultStarch:"Egg Fried Rice", defaultVeg:"No veg",
-    ingredients:[
-      {item:"King prawns",qty:"400g"},
-      {item:"Basmati rice",qty:"300g"},
-      {item:"Eggs",qty:"3"},
-      {item:"Mixed stir fry veg",qty:"300g"},
-      {item:"Soy sauce",qty:"3 tbsp"},
-      {item:"Sesame oil",qty:"1 tbsp"},
-      {item:"Garlic",qty:"2 cloves"},
-    ],
-  },
-  {
-    name:"Thai Green Chicken Curry with Jasmine Rice",
-    protein:"chicken", carb:"rice", cuisine:["thai","asian"], gf:true, allergens:["nuts"], cost:9.00,
-    defaultStarch:"Jasmine Rice", defaultVeg:"No veg",
-    ingredients:[
-      {item:"Chicken breast or thigh",qty:"600g"},
-      {item:"Jasmine rice",qty:"300g"},
-      {item:"Thai green curry paste",qty:"2–3 tbsp"},
-      {item:"Tinned coconut milk",qty:"400ml"},
-      {item:"Green beans",qty:"150g"},
-      {item:"Baby spinach",qty:"80g"},
-      {item:"Lime",qty:"1",note:"For Thai green curry"},
-      {item:"Fresh coriander",qty:"small bunch"},
-    ],
-  },
-  {
-    name:"Nepalese Lentil Dal with Rice & Chapati",
-    protein:"veggie", carb:"rice", cuisine:["nepalese","asian"], gf:false, allergens:["gluten"], cost:5.50,
-    defaultStarch:"Basmati Rice", defaultVeg:"Spinach",
-    ingredients:[
-      {item:"Red or yellow lentils",qty:"300g"},
-      {item:"Basmati rice",qty:"300g"},
-      {item:"Chapati / flatbreads",qty:"4–6"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Garlic",qty:"4 cloves"},
-      {item:"Fresh ginger",qty:"thumb-sized piece"},
-      {item:"Cumin seeds",qty:"1 tsp"},
-      {item:"Turmeric",qty:"1 tsp"},
-      {item:"Tinned chopped tomatoes",qty:"1 tin"},
-      {item:"Spinach",qty:"80g"},
-    ],
-  },
-  {
-    name:"Spaghetti Bolognese with Cheesy Garlic Bread",
-    protein:"beef", carb:"pasta", cuisine:["italian"], gf:false, allergens:["gluten","milk"], cost:8.50,
-    defaultStarch:"Spaghetti", defaultVeg:"Mixed Salad",
-    ingredients:[
-      {item:"Beef mince",qty:"500g"},
-      {item:"Spaghetti",qty:"400g"},
-      {item:"Garlic bread",qty:"1 baguette"},
-      {item:"Cheddar or parmesan",qty:"50g"},
-      {item:"Tinned chopped tomatoes",qty:"2 tins"},
-      {item:"Tomato puree",qty:"2 tbsp"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Garlic",qty:"3 cloves"},
-      {item:"Beef stock cube",qty:"1"},
-      {item:"Dried mixed herbs",qty:"1 tsp"},
-    ],
-  },
-  {
-    name:"Chicken Pasta in Homemade Tomato & Basil Sauce",
-    protein:"chicken", carb:"pasta", cuisine:["italian"], gf:false, allergens:["gluten"], cost:7.50,
-    defaultStarch:"Penne", defaultVeg:"Mixed Salad",
-    ingredients:[
-      {item:"Chicken breast, diced",qty:"500g"},
-      {item:"Penne pasta",qty:"400g"},
-      {item:"Tinned chopped tomatoes",qty:"2 tins"},
-      {item:"Tomato puree",qty:"2 tbsp"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Garlic",qty:"3 cloves"},
-      {item:"Fresh basil",qty:"small bunch"},
-      {item:"Olive oil",qty:"2 tbsp"},
-    ],
-  },
-  {
-    name:"Creamy Chicken Tagliatelle with Garlic & Mushrooms",
-    protein:"chicken", carb:"pasta", cuisine:["italian"], gf:false, allergens:["gluten","milk"], cost:9.00,
-    defaultStarch:"Tagliatelle", defaultVeg:"Mixed Salad",
-    ingredients:[
-      {item:"Chicken breast, sliced",qty:"500g"},
-      {item:"Tagliatelle",qty:"400g"},
-      {item:"Double cream",qty:"200ml"},
-      {item:"Chestnut mushrooms",qty:"250g"},
-      {item:"Garlic",qty:"4 cloves"},
-      {item:"Chicken stock cube",qty:"1"},
-      {item:"Parmesan",qty:"50g"},
-      {item:"Olive oil",qty:"2 tbsp"},
-    ],
-  },
-  {
-    name:"Sausage Pasta with Vegetables & Tomato Sauce",
-    protein:"pork", carb:"pasta", cuisine:["italian"], gf:false, allergens:["gluten"], cost:7.00,
-    defaultStarch:"Penne", defaultVeg:"Mixed Salad",
-    ingredients:[
-      {item:"Pork sausages",qty:"6–8"},
-      {item:"Penne pasta",qty:"400g"},
-      {item:"Tinned chopped tomatoes",qty:"2 tins"},
-      {item:"Bell peppers",qty:"2"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Garlic",qty:"3 cloves"},
-      {item:"Tomato puree",qty:"2 tbsp"},
-      {item:"Olive oil",qty:"2 tbsp"},
-    ],
-  },
-  {
-    name:"Meatballs & Penne in Tomato Sauce",
-    protein:"beef", carb:"pasta", cuisine:["italian"], gf:false, allergens:["gluten","eggs"], cost:8.50,
-    defaultStarch:"Penne", defaultVeg:"Mixed Salad",
-    ingredients:[
-      {item:"Beef mince",qty:"500g"},
-      {item:"Penne pasta",qty:"400g"},
-      {item:"Egg",qty:"1"},
-      {item:"Breadcrumbs",qty:"50g"},
-      {item:"Tinned chopped tomatoes",qty:"2 tins"},
-      {item:"Tomato puree",qty:"2 tbsp"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Garlic",qty:"3 cloves"},
-      {item:"Parmesan",qty:"50g"},
-    ],
-  },
-  {
-    name:"Lasagne with Cheesy Garlic Bread",
-    protein:"beef", carb:"pasta", cuisine:["italian"], gf:false, allergens:["gluten","milk","eggs"], cost:9.00,
-    defaultStarch:"Garlic Bread", defaultVeg:"Mixed Salad",
-    ingredients:[
-      {item:"Beef mince",qty:"500g"},
-      {item:"Lasagne sheets",qty:"1 pack (approx 12 sheets)"},
-      {item:"Garlic bread",qty:"1 baguette"},
-      {item:"Whole milk",qty:"500ml"},
-      {item:"Butter",qty:"50g"},
-      {item:"Plain flour",qty:"50g"},
-      {item:"Cheddar cheese",qty:"150g"},
-      {item:"Tinned chopped tomatoes",qty:"2 tins"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Garlic",qty:"3 cloves"},
-    ],
-  },
-  {
-    name:"Mushroom & Spinach Pasta in Creamy Sauce",
-    protein:"veggie", carb:"pasta", cuisine:["italian"], gf:false, allergens:["gluten","milk"], cost:6.00,
-    defaultStarch:"Penne", defaultVeg:"Mixed Salad",
-    ingredients:[
-      {item:"Chestnut mushrooms",qty:"400g"},
-      {item:"Penne pasta",qty:"400g"},
-      {item:"Double cream",qty:"200ml"},
-      {item:"Spinach",qty:"100g"},
-      {item:"Garlic",qty:"3 cloves"},
-      {item:"Parmesan",qty:"50g"},
-      {item:"Olive oil",qty:"2 tbsp"},
-      {item:"Nutmeg",qty:"pinch"},
-    ],
-  },
-  {
-    name:"Mac & Cheese with Prawns & Garlic Bread",
-    protein:"fish", carb:"pasta", cuisine:["comfort"], gf:false, allergens:["gluten","milk","crustaceans"], cost:9.50,
-    defaultStarch:"Garlic Bread", defaultVeg:"Mixed Salad",
-    ingredients:[
-      {item:"Macaroni pasta",qty:"400g"},
-      {item:"King prawns",qty:"300g"},
-      {item:"Garlic bread",qty:"1 baguette"},
-      {item:"Cheddar cheese",qty:"200g"},
-      {item:"Whole milk",qty:"500ml"},
-      {item:"Butter",qty:"50g"},
-      {item:"Plain flour",qty:"50g"},
-      {item:"Dijon mustard",qty:"1 tsp"},
-    ],
-  },
-  {
-    name:"Cottage Pie with Frozen Peas",
-    protein:"beef", carb:"potato", cuisine:["british-classic"], gf:true, allergens:["celery"], cost:8.00,
-    defaultStarch:"Mashed Potato", defaultVeg:"Frozen Peas",
-    ingredients:[
-      {item:"Beef mince",qty:"500g"},
-      {item:"White potatoes",qty:"900g"},
-      {item:"Frozen peas",qty:"200g"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Carrots",qty:"2"},
-      {item:"Beef stock cube",qty:"1"},
-      {item:"Tomato puree",qty:"2 tbsp"},
-      {item:"Worcestershire sauce (check GF)",qty:"1 tbsp"},
-      {item:"Butter & milk for mash",qty:"to taste"},
-    ],
-  },
-  {
-    name:"Shepherd's Pie with Green Beans & Gravy",
-    protein:"lamb", carb:"potato", cuisine:["british-classic"], gf:true, allergens:["celery"], cost:9.50,
-    defaultStarch:"Mashed Potato", defaultVeg:"Green Beans",
-    ingredients:[
-      {item:"Lamb mince",qty:"500g",note:"Minced lamb — NOT a roasting joint"},
-      {item:"White potatoes",qty:"900g"},
-      {item:"Green beans",qty:"200g"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Carrots",qty:"2"},
-      {item:"Lamb or beef stock cube",qty:"1"},
-      {item:"Tomato puree",qty:"2 tbsp"},
-      {item:"GF gravy granules",qty:"1 tbsp"},
-      {item:"Butter & milk for mash",qty:"to taste"},
-    ],
-  },
-  {
-    name:"Beef & Vegetable Hotpot with Sliced Potato",
-    protein:"beef", carb:"potato", cuisine:["british-classic"], gf:true, allergens:["celery"], cost:9.00,
-    defaultStarch:"Boiled Potatoes", defaultVeg:"Carrots",
-    ingredients:[
-      {item:"Beef braising steak, diced",qty:"600g"},
-      {item:"White potatoes",qty:"800g"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Carrots",qty:"3"},
-      {item:"Celery",qty:"2 sticks"},
-      {item:"Beef stock cube",qty:"2"},
-      {item:"Tomato puree",qty:"1 tbsp"},
-      {item:"Dried thyme",qty:"1 tsp"},
-    ],
-  },
-  {
-    name:"Sausage & Mash with Peas, Carrots & Gravy",
-    protein:"pork", carb:"potato", cuisine:["british-classic"], gf:true, allergens:["celery"], cost:7.50,
-    defaultStarch:"Mashed Potato", defaultVeg:"Frozen Peas",
-    ingredients:[
-      {item:"Pork sausages",qty:"8"},
-      {item:"White potatoes",qty:"900g"},
-      {item:"Frozen peas",qty:"200g"},
-      {item:"Carrots",qty:"3"},
-      {item:"GF gravy granules",qty:"2 tbsp"},
-      {item:"Butter & milk for mash",qty:"to taste"},
-      {item:"Onion",qty:"1 (for onion gravy)"},
-    ],
-  },
-  {
-    name:"Toad in the Hole with Mash & Green Beans",
-    protein:"pork", carb:"potato", cuisine:["british-classic"], gf:false, allergens:["gluten","eggs","milk"], cost:7.50,
-    defaultStarch:"Mashed Potato", defaultVeg:"Green Beans",
-    ingredients:[
-      {item:"Pork sausages",qty:"8"},
-      {item:"White potatoes",qty:"900g"},
-      {item:"Green beans",qty:"200g"},
-      {item:"Eggs",qty:"3"},
-      {item:"Plain flour",qty:"150g"},
-      {item:"Whole milk",qty:"200ml"},
-      {item:"GF gravy granules",qty:"2 tbsp"},
-      {item:"Vegetable oil",qty:"2 tbsp"},
-    ],
-  },
-  {
-    name:"Gammon, Egg & Chips with Peas & Pineapple",
-    protein:"pork", carb:"potato", cuisine:["british-classic"], gf:true, allergens:["eggs"], cost:8.50,
-    defaultStarch:"Chips / Fries", defaultVeg:"Frozen Peas",
-    ingredients:[
-      {item:"Gammon steaks",qty:"4"},
-      {item:"Eggs",qty:"4"},
-      {item:"White potatoes or oven chips",qty:"800g"},
-      {item:"Frozen peas",qty:"200g"},
-      {item:"Pineapple rings",qty:"1 tin"},
-      {item:"Vegetable oil",qty:"2 tbsp"},
-    ],
-  },
-  {
-    name:"Fish Pie with Mashed Potato & Peas",
-    protein:"fish", carb:"potato", cuisine:["british-classic"], gf:true, allergens:["fish","milk"], cost:10.50,
-    defaultStarch:"Mashed Potato", defaultVeg:"Frozen Peas",
-    ingredients:[
-      {item:"Fish pie mix (salmon, haddock, prawns)",qty:"600g"},
-      {item:"White potatoes",qty:"900g"},
-      {item:"Frozen peas",qty:"200g"},
-      {item:"Whole milk",qty:"400ml"},
-      {item:"Butter",qty:"50g"},
-      {item:"Plain GF flour",qty:"30g"},
-      {item:"Cheddar cheese",qty:"75g"},
-      {item:"Spring onions",qty:"4"},
-    ],
-  },
-  {
-    name:"GF Fish & Chips with Peas or Baked Beans",
-    protein:"fish", carb:"potato", cuisine:["british-classic"], gf:true, allergens:["fish"], cost:9.00,
-    defaultStarch:"Chips / Fries", defaultVeg:"Frozen Peas",
-    ingredients:[
-      {item:"White fish fillets (cod or haddock)",qty:"4"},
-      {item:"GF breadcrumbs or batter mix",qty:"150g"},
-      {item:"White potatoes or oven chips",qty:"800g"},
-      {item:"Frozen peas or baked beans",qty:"200g / 1 tin"},
-      {item:"Lemon",qty:"1",note:"For fish & chips"},
-      {item:"Tartar sauce",qty:"to serve"},
-    ],
-  },
-  {
-    name:"Lemon Chicken, Potato & Vegetable Tray Bake",
-    protein:"chicken", carb:"potato", cuisine:["mediterranean"], gf:true, allergens:[], cost:9.00,
-    defaultStarch:"Roast Potatoes", defaultVeg:"Roasted Mediterranean Veg",
-    ingredients:[
-      {item:"Chicken thighs (bone-in)",qty:"8"},
-      {item:"White potatoes",qty:"800g"},
-      {item:"Bell peppers",qty:"2"},
-      {item:"Courgette",qty:"1"},
-      {item:"Red onion",qty:"1"},
-      {item:"Lemon",qty:"2",note:"For lemon chicken tray bake"},
-      {item:"Garlic",qty:"4 cloves"},
-      {item:"Fresh thyme",qty:"small bunch"},
-      {item:"Olive oil",qty:"3 tbsp"},
-    ],
-  },
-  {
-    name:"Moussaka with Greek Salad",
-    protein:"lamb", carb:"other", cuisine:["mediterranean","greek"], gf:true, allergens:["milk","eggs"], cost:10.50,
-    defaultStarch:"No starch", defaultVeg:"Greek Salad",
-    ingredients:[
-      {item:"Lamb mince",qty:"500g",note:"Minced lamb — NOT a roasting joint"},
-      {item:"Aubergines",qty:"2 large"},
-      {item:"White potatoes",qty:"400g"},
-      {item:"Whole milk",qty:"400ml"},
-      {item:"Butter",qty:"40g"},
-      {item:"Plain GF flour",qty:"30g"},
-      {item:"Eggs",qty:"2"},
-      {item:"Cheddar or parmesan",qty:"75g"},
-      {item:"Tinned chopped tomatoes",qty:"1 tin"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Garlic",qty:"3 cloves"},
-      {item:"Cinnamon",qty:"½ tsp"},
-      {item:"Cucumber, tomatoes, olives, feta",qty:"for Greek salad"},
-    ],
-  },
-  {
-    name:"Chicken Bobotie with Basmati Rice",
-    protein:"chicken", carb:"rice", cuisine:["african","world"], gf:true, allergens:["eggs","milk"], cost:8.50,
-    defaultStarch:"Basmati Rice", defaultVeg:"No veg",
-    ingredients:[
-      {item:"Chicken mince or breast, finely chopped",qty:"500g"},
-      {item:"Basmati rice",qty:"300g"},
-      {item:"Eggs",qty:"2"},
-      {item:"Whole milk",qty:"100ml"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Garlic",qty:"2 cloves"},
-      {item:"Curry powder",qty:"2 tbsp"},
-      {item:"Apricot jam",qty:"2 tbsp"},
-      {item:"Bay leaves",qty:"2"},
-    ],
-  },
-  {
-    name:"Beef Bobotie with Basmati Rice",
-    protein:"beef", carb:"rice", cuisine:["african","world"], gf:true, allergens:["eggs","milk"], cost:9.00,
-    defaultStarch:"Basmati Rice", defaultVeg:"No veg",
-    ingredients:[
-      {item:"Beef mince",qty:"500g"},
-      {item:"Basmati rice",qty:"300g"},
-      {item:"Eggs",qty:"2"},
-      {item:"Whole milk",qty:"100ml"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Garlic",qty:"2 cloves"},
-      {item:"Curry powder",qty:"2 tbsp"},
-      {item:"Apricot jam",qty:"2 tbsp"},
-      {item:"Bay leaves",qty:"2"},
-    ],
-  },
-  {
-    name:"Chicken Potjie with Baby Potatoes & Butternut",
-    protein:"chicken", carb:"potato", cuisine:["african","world"], gf:true, allergens:[], cost:9.00,
-    defaultStarch:"Boiled Potatoes", defaultVeg:"Roasted Mediterranean Veg",
-    ingredients:[
-      {item:"Chicken pieces (thighs/drumsticks)",qty:"8"},
-      {item:"Baby potatoes",qty:"500g"},
-      {item:"Butternut squash",qty:"½ medium"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Garlic",qty:"3 cloves"},
-      {item:"Tinned chopped tomatoes",qty:"1 tin"},
-      {item:"Chicken stock cube",qty:"1"},
-      {item:"Fresh thyme",qty:"small bunch"},
-    ],
-  },
-  {
-    name:"Chilli Con Carne with Rice & Nachos",
-    protein:"beef", carb:"rice", cuisine:["tex-mex","american"], gf:true, allergens:[], cost:8.50,
-    defaultStarch:"Basmati Rice", defaultVeg:"No veg",
-    ingredients:[
-      {item:"Beef mince",qty:"500g"},
-      {item:"Basmati rice",qty:"300g"},
-      {item:"Tortilla chips / nachos",qty:"1 bag"},
-      {item:"Tinned kidney beans",qty:"1 tin"},
-      {item:"Tinned chopped tomatoes",qty:"2 tins"},
-      {item:"Tomato puree",qty:"2 tbsp"},
-      {item:"Onion",qty:"1 large"},
-      {item:"Garlic",qty:"3 cloves"},
-      {item:"Chilli powder & cumin",qty:"2 tsp each"},
-      {item:"Beef stock cube",qty:"1"},
-      {item:"Soured cream & cheddar to serve",qty:"optional"},
-    ],
-  },
-  {
-    name:"Cheese & Bacon Burger with Waffle Fries",
-    protein:"beef", carb:"potato", cuisine:["american","comfort"], gf:false, allergens:["gluten","milk","eggs"], cost:9.50,
-    defaultStarch:"Chips / Fries", defaultVeg:"Mixed Salad",
-    ingredients:[
-      {item:"Beef mince",qty:"500g"},
-      {item:"Burger buns",qty:"4"},
-      {item:"Waffle fries or oven chips",qty:"800g"},
-      {item:"Cheddar cheese slices",qty:"4"},
-      {item:"Smoked bacon",qty:"4 rashers"},
-      {item:"Lettuce, tomato, onion",qty:"for serving"},
-      {item:"Ketchup / burger sauce",qty:"to taste"},
-    ],
-  },
-  {
-    name:"Chicken Burger with Wedges, Lettuce & Tomato",
-    protein:"chicken", carb:"potato", cuisine:["american","comfort"], gf:false, allergens:["gluten"], cost:8.50,
-    defaultStarch:"Potato Wedges", defaultVeg:"Mixed Salad",
-    ingredients:[
-      {item:"Chicken breast",qty:"4"},
-      {item:"Burger buns",qty:"4"},
-      {item:"White potatoes for wedges",qty:"800g"},
-      {item:"Lettuce",qty:"½ head"},
-      {item:"Tomatoes",qty:"2"},
-      {item:"Mayonnaise",qty:"3 tbsp"},
-      {item:"Olive oil & paprika for wedges",qty:"to season"},
-    ],
-  },
-  {
-    name:"Chicken Wings with Potato Wedges & Salad",
-    protein:"chicken", carb:"potato", cuisine:["american","comfort"], gf:true, allergens:[], cost:8.00,
-    defaultStarch:"Potato Wedges", defaultVeg:"Mixed Salad",
-    ingredients:[
-      {item:"Chicken wings",qty:"1kg"},
-      {item:"White potatoes for wedges",qty:"800g"},
-      {item:"Mixed salad leaves",qty:"1 bag"},
-      {item:"Hot sauce or BBQ sauce",qty:"3 tbsp"},
-      {item:"Garlic powder, paprika",qty:"1 tsp each"},
-      {item:"Olive oil",qty:"2 tbsp"},
-    ],
-  },
-  {
-    name:"Chicken Dippers with Chips & Baked Beans",
-    protein:"chicken", carb:"potato", cuisine:["comfort"], gf:true, allergens:[], cost:6.50,
-    defaultStarch:"Chips / Fries", defaultVeg:"Baked Beans",
-    ingredients:[
-      {item:"Chicken dippers / nuggets",qty:"1 pack (500g)"},
-      {item:"Oven chips",qty:"800g"},
-      {item:"Baked beans",qty:"1 tin"},
-    ],
-  },
-  {
-    name:"Hot Dogs with Chips & Side Salad",
-    protein:"pork", carb:"potato", cuisine:["american","comfort"], gf:false, allergens:["gluten"], cost:6.50,
-    defaultStarch:"Chips / Fries", defaultVeg:"Mixed Salad",
-    ingredients:[
-      {item:"Hot dog sausages",qty:"1 pack (8)"},
-      {item:"Hot dog buns",qty:"1 pack (8)"},
-      {item:"Oven chips",qty:"800g"},
-      {item:"Mixed salad leaves",qty:"1 bag"},
-      {item:"Ketchup & mustard",qty:"to taste"},
-    ],
-  },
-  {
-    name:"Sausage Rolls with Wedges & Sweetcorn",
-    protein:"pork", carb:"potato", cuisine:["british","comfort"], gf:false, allergens:["gluten","eggs"], cost:7.00,
-    defaultStarch:"Potato Wedges", defaultVeg:"Sweetcorn",
-    ingredients:[
-      {item:"Ready-made sausage rolls",qty:"1 pack"},
-      {item:"White potatoes for wedges",qty:"800g"},
-      {item:"Sweetcorn",qty:"1 tin or frozen 200g"},
-      {item:"Olive oil & paprika for wedges",qty:"to season"},
-    ],
-  },
-  {
-    name:"Pizza with Potato Salad & Coleslaw",
-    protein:"veggie", carb:"other", cuisine:["italian","comfort"], gf:false, allergens:["gluten","milk"], cost:6.50,
-    defaultStarch:"No starch", defaultVeg:"Mixed Salad",
-    ingredients:[
-      {item:"Pizza bases or ready-made pizzas",qty:"2 large"},
-      {item:"Pizza sauce / passata",qty:"200ml"},
-      {item:"Mozzarella",qty:"150g"},
-      {item:"Your choice of toppings",qty:"as needed"},
-      {item:"White potatoes for potato salad",qty:"400g"},
-      {item:"Coleslaw",qty:"1 small tub"},
-      {item:"Mayonnaise",qty:"2 tbsp"},
-    ],
-  },
-  {
-    name:"Roasted Salmon with Potato Wedges & Green Beans",
-    protein:"fish", carb:"potato", cuisine:["british","mediterranean"], gf:true, allergens:["fish"], cost:11.00,
-    defaultStarch:"Potato Wedges", defaultVeg:"Green Beans",
-    ingredients:[
-      {item:"Salmon fillets",qty:"4"},
-      {item:"White potatoes for wedges",qty:"800g"},
-      {item:"Green beans",qty:"200g"},
-      {item:"Lemon",qty:"1",note:"For roasted salmon"},
-    ],
-  },
-  {
-    name:"Fish Fingers & Chips with Beans or Peas",
-    protein:"fish", carb:"potato", cuisine:["comfort"], gf:true, allergens:["fish","gluten"], cost:7.50,
-    defaultStarch:"Chips / Fries", defaultVeg:"Frozen Peas",
-    ingredients:[
-      {item:"Fish fingers",qty:"1 pack (12–16)"},
-      {item:"Oven chips",qty:"800g"},
-      {item:"Baked beans or frozen peas",qty:"1 tin / 200g"},
-      {item:"Ketchup",qty:"to serve"},
-    ],
-  },
-  {
-    name:"Full Cooked Breakfast with GF Toast & Hash Browns",
-    protein:"pork", carb:"other", cuisine:["british","breakfast"], gf:false, allergens:["gluten","eggs","milk"], cost:8.00,
-    defaultStarch:"No starch", defaultVeg:"No veg",
-    ingredients:[
-      {item:"Pork sausages",qty:"8"},
-      {item:"Smoked bacon",qty:"8 rashers"},
-      {item:"Eggs",qty:"4"},
-      {item:"Tinned baked beans",qty:"1 tin"},
-      {item:"Tinned tomatoes",qty:"1 tin"},
-      {item:"Mushrooms",qty:"200g"},
-      {item:"Hash browns",qty:"1 pack"},
-      {item:"GF bread",qty:"4 slices"},
-      {item:"Butter",qty:"25g"},
-    ],
-  },
-  {
-    name:"Quiche with Potato Wedges & Greek Salad",
-    protein:"veggie", carb:"potato", cuisine:["british","mediterranean"], gf:true, allergens:["eggs","milk"], cost:7.50,
-    defaultStarch:"Potato Wedges", defaultVeg:"Greek Salad",
-    ingredients:[
-      {item:"Ready-made quiche (or pastry + filling)",qty:"1 large"},
-      {item:"White potatoes for wedges",qty:"600g"},
-      {item:"Cucumber, tomatoes, olives, feta",qty:"for Greek salad"},
-      {item:"Olive oil & lemon for dressing",qty:"to taste"},
-    ],
-  },
-  {
-    name:"Loaded Baked Potato with Savoury Mince & Cheese",
-    protein:"beef", carb:"potato", cuisine:["british","comfort"], gf:true, allergens:["milk"], cost:7.50,
-    defaultStarch:"Jacket Potato", defaultVeg:"Mixed Salad",
-    ingredients:[
-      {item:"Large baking potatoes",qty:"4"},
-      {item:"Beef mince",qty:"400g"},
-      {item:"Cheddar cheese",qty:"150g"},
-      {item:"Tinned chopped tomatoes",qty:"1 tin"},
-      {item:"Onion",qty:"1"},
-      {item:"Garlic",qty:"2 cloves"},
-      {item:"Butter",qty:"25g"},
-      {item:"Soured cream",qty:"optional"},
-    ],
-  },
-  {
-    name:"Pork Chops with Apple Sauce, Mash & Green Beans",
-    protein:"pork", carb:"potato", cuisine:["british"], gf:true, allergens:["milk"], cost:9.00,
-    defaultStarch:"Mashed Potato", defaultVeg:"Green Beans",
-    ingredients:[
-      {item:"Pork loin chops",qty:"4"},
-      {item:"White potatoes",qty:"900g"},
-      {item:"Green beans",qty:"200g"},
-      {item:"Apple sauce",qty:"1 jar"},
-      {item:"Butter & milk for mash",qty:"to taste"},
-      {item:"Olive oil",qty:"1 tbsp"},
-    ],
-  },
-  {
-    name:"Oven Baked Rice with Chicken, Chorizo & Tomato",
-    protein:"chicken", carb:"rice", cuisine:["mediterranean","spanish"], gf:true, allergens:[], cost:8.50,
-    defaultStarch:"Basmati Rice", defaultVeg:"No veg",
-    ingredients:[
-      {item:"Chicken thighs (bone-in)",qty:"8"},
-      {item:"Basmati rice",qty:"300g"},
-      {item:"Chorizo",qty:"150g"},
-      {item:"Tinned chopped tomatoes",qty:"1 tin"},
-      {item:"Chicken stock cube",qty:"1"},
-      {item:"Red bell pepper",qty:"1"},
-      {item:"Onion",qty:"1"},
-      {item:"Garlic",qty:"3 cloves"},
-      {item:"Smoked paprika",qty:"1 tsp"},
-    ],
-  },
+  { name:"Roast Chicken with Roast Potatoes, Yorkshire & Gravy", protein:"chicken", carb:"potato", cuisine:["british-roast"], gf:true, allergens:["celery"], cost:9.50 },
+  { name:"Roast Pork with Apple Sauce, Roast Potatoes & Veg", protein:"pork", carb:"potato", cuisine:["british-roast"], gf:true, allergens:["celery"], cost:9.50 },
+  { name:"Roast Lamb with Roast Potatoes, Cabbage & Peas", protein:"lamb", carb:"potato", cuisine:["british-roast"], gf:true, allergens:["celery"], cost:12.00 },
+  { name:"Chicken & Vegetable Curry with Basmati Rice", protein:"chicken", carb:"rice", cuisine:["curry","indian"], gf:true, allergens:[], cost:8.00 },
+  { name:"Butter Chicken Curry with Basmati Rice", protein:"chicken", carb:"rice", cuisine:["curry","indian"], gf:true, allergens:["milk"], cost:9.00 },
+  { name:"Chicken Tikka Masala with Pilau Rice", protein:"chicken", carb:"rice", cuisine:["curry","indian"], gf:true, allergens:["milk"], cost:9.50 },
+  { name:"Beef Curry with Basmati Rice", protein:"beef", carb:"rice", cuisine:["curry","indian"], gf:true, allergens:[], cost:10.00 },
+  { name:"Lamb Curry with Basmati Rice", protein:"lamb", carb:"rice", cuisine:["curry","indian"], gf:false, allergens:["gluten","milk"], cost:11.00 },
+  { name:"Vegetable Curry with Basmati Rice", protein:"veggie", carb:"rice", cuisine:["curry","indian"], gf:false, allergens:["gluten"], cost:6.50 },
+  { name:"Chicken Teriyaki Stir Fry with Basmati Rice", protein:"chicken", carb:"rice", cuisine:["asian","japanese"], gf:true, allergens:["soya","sesame"], cost:8.50 },
+  { name:"Beef Teriyaki Stir Fry with Egg Fried Rice", protein:"beef", carb:"rice", cuisine:["asian","japanese"], gf:true, allergens:["soya","eggs","sesame"], cost:10.00 },
+  { name:"Pork & Veg Stir Fry with Teriyaki & Rice", protein:"pork", carb:"rice", cuisine:["asian"], gf:true, allergens:["soya","sesame"], cost:8.00 },
+  { name:"Sweet & Sour Chicken with Rice & Prawn Crackers", protein:"chicken", carb:"rice", cuisine:["asian","chinese"], gf:true, allergens:["crustaceans"], cost:8.00 },
+  { name:"Sweet & Sour Pork with Rice & Prawn Crackers", protein:"pork", carb:"rice", cuisine:["asian","chinese"], gf:true, allergens:["crustaceans"], cost:8.00 },
+  { name:"Prawn & Vegetable Stir Fry with Egg Fried Rice", protein:"fish", carb:"rice", cuisine:["asian","chinese"], gf:true, allergens:["crustaceans","eggs","soya"], cost:10.00 },
+  { name:"Thai Green Chicken Curry with Jasmine Rice", protein:"chicken", carb:"rice", cuisine:["thai","asian"], gf:true, allergens:["nuts"], cost:9.00 },
+  { name:"Nepalese Lentil Dal with Rice & Chapati", protein:"veggie", carb:"rice", cuisine:["nepalese","asian"], gf:false, allergens:["gluten"], cost:5.50 },
+  { name:"Spaghetti Bolognese with Cheesy Garlic Bread", protein:"beef", carb:"pasta", cuisine:["italian"], gf:false, allergens:["gluten","milk"], cost:8.50 },
+  { name:"Chicken Pasta in Homemade Tomato & Basil Sauce", protein:"chicken", carb:"pasta", cuisine:["italian"], gf:false, allergens:["gluten"], cost:7.50 },
+  { name:"Creamy Chicken Tagliatelle with Garlic & Mushrooms", protein:"chicken", carb:"pasta", cuisine:["italian"], gf:false, allergens:["gluten","milk"], cost:9.00 },
+  { name:"Sausage Pasta with Vegetables & Tomato Sauce", protein:"pork", carb:"pasta", cuisine:["italian"], gf:false, allergens:["gluten"], cost:7.00 },
+  { name:"Meatballs & Penne in Tomato Sauce", protein:"beef", carb:"pasta", cuisine:["italian"], gf:false, allergens:["gluten","eggs"], cost:8.50 },
+  { name:"Lasagne with Cheesy Garlic Bread", protein:"beef", carb:"pasta", cuisine:["italian"], gf:false, allergens:["gluten","milk","eggs"], cost:9.00 },
+  { name:"Mushroom & Spinach Pasta in Creamy Sauce", protein:"veggie", carb:"pasta", cuisine:["italian"], gf:false, allergens:["gluten","milk"], cost:6.00 },
+  { name:"Mac & Cheese with Prawns & Garlic Bread", protein:"fish", carb:"pasta", cuisine:["comfort"], gf:false, allergens:["gluten","milk","crustaceans"], cost:9.50 },
+  { name:"Cottage Pie with Frozen Peas", protein:"beef", carb:"potato", cuisine:["british-classic"], gf:true, allergens:["celery"], cost:8.00 },
+  { name:"Shepherd's Pie with Green Beans & Gravy", protein:"lamb", carb:"potato", cuisine:["british-classic"], gf:true, allergens:["celery"], cost:9.50 },
+  { name:"Beef & Vegetable Hotpot with Sliced Potato", protein:"beef", carb:"potato", cuisine:["british-classic"], gf:true, allergens:["celery"], cost:9.00 },
+  { name:"Sausage & Mash with Peas, Carrots & Gravy", protein:"pork", carb:"potato", cuisine:["british-classic"], gf:true, allergens:["celery"], cost:7.50 },
+  { name:"Toad in the Hole with Mash & Green Beans", protein:"pork", carb:"potato", cuisine:["british-classic"], gf:false, allergens:["gluten","eggs","milk"], cost:7.50 },
+  { name:"Gammon, Egg & Chips with Peas & Pineapple", protein:"pork", carb:"potato", cuisine:["british-classic"], gf:true, allergens:["eggs"], cost:8.50 },
+  { name:"Fish Pie with Mashed Potato & Peas", protein:"fish", carb:"potato", cuisine:["british-classic"], gf:true, allergens:["fish","milk"], cost:10.50 },
+  { name:"GF Fish & Chips with Peas or Baked Beans", protein:"fish", carb:"potato", cuisine:["british-classic"], gf:true, allergens:["fish"], cost:9.00 },
+  { name:"Lemon Chicken, Potato & Vegetable Tray Bake", protein:"chicken", carb:"potato", cuisine:["mediterranean"], gf:true, allergens:[], cost:9.00 },
+  { name:"Moussaka with Greek Salad", protein:"lamb", carb:"other", cuisine:["mediterranean","greek"], gf:true, allergens:["milk","eggs"], cost:10.50 },
+  { name:"Chicken Bobotie with Basmati Rice", protein:"chicken", carb:"rice", cuisine:["african","world"], gf:true, allergens:["eggs","milk"], cost:8.50 },
+  { name:"Beef Bobotie with Basmati Rice", protein:"beef", carb:"rice", cuisine:["african","world"], gf:true, allergens:["eggs","milk"], cost:9.00 },
+  { name:"Chicken Potjie with Baby Potatoes & Butternut", protein:"chicken", carb:"potato", cuisine:["african","world"], gf:true, allergens:[], cost:9.00 },
+  { name:"Chilli Con Carne with Rice & Nachos", protein:"beef", carb:"rice", cuisine:["tex-mex","american"], gf:true, allergens:[], cost:8.50 },
+  { name:"Cheese & Bacon Burger with Waffle Fries", protein:"beef", carb:"potato", cuisine:["american","comfort"], gf:false, allergens:["gluten","milk","eggs"], cost:9.50 },
+  { name:"Chicken Burger with Wedges, Lettuce & Tomato", protein:"chicken", carb:"potato", cuisine:["american","comfort"], gf:false, allergens:["gluten"], cost:8.50 },
+  { name:"Chicken Wings with Potato Wedges & Salad", protein:"chicken", carb:"potato", cuisine:["american","comfort"], gf:true, allergens:[], cost:8.00 },
+  { name:"Chicken Dippers with Chips & Baked Beans", protein:"chicken", carb:"potato", cuisine:["comfort"], gf:true, allergens:[], cost:6.50 },
+  { name:"Hot Dogs with Chips & Side Salad", protein:"pork", carb:"potato", cuisine:["american","comfort"], gf:false, allergens:["gluten"], cost:6.50 },
+  { name:"Sausage Rolls with Wedges & Sweetcorn", protein:"pork", carb:"potato", cuisine:["british","comfort"], gf:false, allergens:["gluten","eggs"], cost:7.00 },
+  { name:"Pizza with Potato Salad & Coleslaw", protein:"veggie", carb:"other", cuisine:["italian","comfort"], gf:false, allergens:["gluten","milk"], cost:6.50 },
+  { name:"Roasted Salmon with Potato Wedges & Green Beans", protein:"fish", carb:"potato", cuisine:["british","mediterranean"], gf:true, allergens:["fish"], cost:11.00 },
+  { name:"Fish Fingers & Chips with Beans or Peas", protein:"fish", carb:"potato", cuisine:["comfort"], gf:true, allergens:["fish","gluten"], cost:7.50 },
+  { name:"Full Cooked Breakfast with GF Toast & Hash Browns", protein:"pork", carb:"other", cuisine:["british","breakfast"], gf:false, allergens:["gluten","eggs","milk"], cost:8.00 },
+  { name:"Quiche with Potato Wedges & Greek Salad", protein:"veggie", carb:"potato", cuisine:["british","mediterranean"], gf:true, allergens:["eggs","milk"], cost:7.50 },
+  { name:"Loaded Baked Potato with Savoury Mince & Cheese", protein:"beef", carb:"potato", cuisine:["british","comfort"], gf:true, allergens:["milk"], cost:7.50 },
+  { name:"Pork Chops with Apple Sauce, Mash & Green Beans", protein:"pork", carb:"potato", cuisine:["british"], gf:true, allergens:["milk"], cost:9.00 },
+  { name:"Oven Baked Rice with Chicken, Chorizo & Tomato", protein:"chicken", carb:"rice", cuisine:["mediterranean","spanish"], gf:true, allergens:[], cost:8.50 },
 ];
-
-// ─── SAINSBURY'S PRICE DATABASE (April 2026) ─────────────────────────────────
-// All prices in £ per 100g or £ per unit as noted
-// Sources: Sainsbury's receipts March 2026 + live lookup April 2026
-const PRICES = {
-  // ── Proteins (£ per 100g) ──
-  "whole chicken":        0.33,  // 1.6kg £5.35
-  "chicken breast":       0.73,  // 320g £2.34
-  "chicken thigh":        0.30,  // 1kg £2.99
-  "chicken mince":        0.73,  // same as breast
-  "chicken pieces":       0.30,  // thighs rate
-  "chicken dippers":      0.65,  // estimated from frozen range
-  "beef mince":           0.93,  // 1kg £9.25
-  "beef braising":        1.25,  // 500g £6.25
-  "beef steak":           1.89,  // rump 225g £4.25
-  "beef burger":          0.88,  // 454g £4.00
-  "pork chop":            0.85,  // tenderloin rate
-  "pork tenderloin":      0.85,  // 460g £3.93
-  "pork sausage":         0.81,  // 400g £3.25
-  "pork fillet":          0.85,
-  "gammon":               0.75,  // estimated (not on receipt)
-  "bacon":                0.45,  // 300g £1.35 avg
-  "hot dog":              0.49,  // 380g £1.85
-  "lamb mince":           1.60,  // 500g £8.00
-  "lamb leg":             1.67,  // per kg normalised sale price
-  "lamb shoulder":        2.06,  // 400g £8.25
-  "king prawn":           1.58,  // 400g frozen £6.33
-  "prawn":                1.58,
-  "white fish":           0.45,  // 520g £2.33
-  "fish finger":          1.04,  // 360g £3.75
-  "salmon":               2.95,  // 100g £2.95
-  "fish pie mix":         0.80,  // estimated blend
-  "sausage roll":         0.65,  // estimated
-
-  // ── Dairy & Eggs (£ per 100g or per unit) ──
-  "egg":                  0.24,  // per egg (£2.90/dozen) — use perUnit
-  "butter":               0.75,  // 250g £1.87
-  "milk":                 0.073, // per 100ml, 2.27L £1.65
-  "double cream":         0.67,  // 300ml £2.00
-  "creme fraiche":        0.35,  // 300ml £1.05
-  "natural yoghurt":      0.47,  // 500g £2.35
-  "cheddar":              0.63,  // 600g £3.79
-  "cheese":               0.63,  // default to cheddar
-  "mozzarella":           0.55,  // 125g £0.69
-  "feta":                 0.43,  // 200g £0.85
-  "parmesan":             2.00,  // 200g £4.00
-  "cream cheese":         0.60,  // estimated
-
-  // ── Vegetables (£ per 100g) ──
-  "white potato":         0.066, // 2kg £1.32
-  "potato":               0.066,
-  "baking potato":        0.099, // x4 £0.79
-  "sweet potato":         0.12,  // per kg £1.19
-  "carrot":               0.069, // 1kg £0.69
-  "onion":                0.10,  // per kg ~£1.00
-  "garlic":               0.22,  // per bulb £0.22
-  "ginger":               0.56,  // per 100g (£5.60/kg)
-  "pepper":               0.47,  // each ~150g £0.70
-  "courgette":            0.29,  // 500g £1.45
-  "aubergine":            0.33,  // each ~300g £0.99
-  "broccoli":             0.25,  // head ~400g £1.00
-  "spinach":              0.75,  // 200g £1.50
-  "green bean":           0.73,  // 200g £1.45
-  "spring onion":         0.69,  // bunch ~100g £0.69
-  "mushroom":             0.29,  // 400g £1.15
-  "tomato":               0.28,  // per kg £2.80
-  "cucumber":             0.22,  // each ~370g £0.82
-  "lettuce":              0.87,  // pack avg (whole unit)
-  "butternut squash":     0.15,  // per kg £1.50
-  "parsnip":              0.15,  // per kg £1.47
-  "cabbage":              0.15,  // estimated
-  "frozen pea":           0.12,  // estimated
-  "sweetcorn":            0.25,  // 198g tin £0.49
-  "lemon":                0.35,  // per unit
-  "lime":                 0.24,  // per unit
-
-  // ── Carbs — dry weight (£ per 100g) ──
-  "basmati rice":         0.18,  // 1kg £1.79
-  "rice":                 0.18,
-  "pasta":                0.15,  // GF penne/spaghetti 500g £0.75
-  "spaghetti":            0.15,
-  "penne":                0.15,
-  "tagliatelle":          0.15,
-  "lasagne sheet":        0.30,  // 250g £0.75
-  "macaroni":             0.15,
-  "lentil":               0.20,  // 1kg £2.00
-  "chapati":              0.20,  // estimated
-  "naan":                 0.25,  // estimated
-  "tortilla chip":        0.45,  // 200g £0.89
-
-  // ── Tins & Jars (£ per 100g or unit) ──
-  "chopped tomato":       0.11,  // 400g £0.43
-  "tomato puree":         0.33,  // 200g £0.65
-  "pasta sauce":          0.14,  // 500g £0.69
-  "kidney bean":          0.11,  // 400g £0.45
-  "baked bean":           0.34,  // 415g £1.40
-  "coconut milk":         0.25,  // 400ml £1.00
-  "pineapple":            0.27,  // 425g £1.15
-  "apple sauce":          0.24,  // 250ml £0.60
-  "mint sauce":           0.30,  // jar £0.82 ~275g
-  "apricot jam":          0.20,  // 454g £0.89
-  "teriyaki sauce":       1.05,  // 200g £2.10
-  "sweet sour sauce":     0.24,  // 500g £1.20
-  "curry paste":          1.12,  // 290g £3.25
-  "stock cube":           0.15,  // per cube
-  "gravy granule":        0.88,  // 170g £1.50
-  "prawn cracker":        0.45,  // similar to tortilla
-
-  // ── Oils & Sundry ──
-  "olive oil":            0.75,  // per 100ml, 1L £7.50
-  "sunflower oil":        0.17,  // per 100ml, 1L £1.65
-  "hash brown":           0.32,  // 625g £2.00
-};
-
-// ─── BNF PORTION SIZES (grams per adult per meal) ────────────────────────────
-// Source: British Nutrition Foundation — Your Balanced Diet guide
-const BNF = {
-  // Proteins
-  wholeChicken:    350, // whole roast chicken — 350g cooked per person incl bone loss
-  chickenBreast:   130, // cooked breast
-  chickenThigh:    150, // bone-in thighs (2 per person)
-  beefMince:       130, // mince in sauce
-  beefBraising:    150, // stew/hotpot
-  beefBurger:      115, // one quarter-pounder (114g raw)
-  pork:            130,
-  lamb:            130,
-  fish:            130, // fillet
-  prawn:           120,
-  // Carbs (dry weight — converts to cooked)
-  riceDry:          75, // cooks to ~200g
-  pastaDry:         80, // cooks to ~200g
-  potato:          200, // raw (peeled)
-  lentilDry:        75,
-  // Veg
-  veg:              80, // one BNF portion
-  // Dairy in sauces
-  milkSauce:       120, // ml per person
-  creamSauce:       40, // ml per person
-  cheese:           30, // hard cheese per person
-  // Storecupboard buffer (oils, herbs, seasonings, stock, puree etc.)
-  storecupboard:  0.40, // £ per person flat addition
-};
-
-// ─── MEAL COST CALCULATOR ─────────────────────────────────────────────────────
-// Calculates realistic per-meal cost using BNF portions × real Sainsbury's prices
-// Returns cost for the whole family (familySize people)
-const calcMealCost = (mealName, familySize) => {
-  const n = familySize || 4;
-
-  // Map each meal to its key cost components
-  const recipes = {
-    "Roast Chicken with Roast Potatoes, Yorkshire & Gravy": () =>
-      PRICES["whole chicken"] * BNF.wholeChicken * n
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["milk"] * 100 * n / 100  // yorkshire batter
-      + PRICES["egg"] * 1               // yorkshire
-      + PRICES["gravy granule"] * 15,
-
-    "Roast Pork with Apple Sauce, Roast Potatoes & Veg": () =>
-      PRICES["pork tenderloin"] * BNF.pork * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["apple sauce"] * 50 / 100
-      + PRICES["carrot"] * BNF.veg * n / 100,
-
-    "Roast Lamb with Roast Potatoes, Cabbage & Peas": () =>
-      PRICES["lamb leg"] * BNF.lamb * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["frozen pea"] * BNF.veg * n / 100
-      + PRICES["mint sauce"] * 30 / 100,
-
-    "Chicken & Vegetable Curry with Basmati Rice": () =>
-      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
-      + PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["curry paste"] * 60 / 100
-      + PRICES["chopped tomato"] * 200 / 100
-      + PRICES["onion"] * 100 / 100
-      + PRICES["pepper"] * 100 / 100,
-
-    "Butter Chicken Curry with Basmati Rice": () =>
-      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
-      + PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["curry paste"] * 80 / 100
-      + PRICES["double cream"] * BNF.creamSauce * n / 100
-      + PRICES["chopped tomato"] * 200 / 100,
-
-    "Chicken Tikka Masala with Pilau Rice": () =>
-      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
-      + PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["curry paste"] * 80 / 100
-      + PRICES["coconut milk"] * 150 / 100
-      + PRICES["chopped tomato"] * 200 / 100,
-
-    "Beef Curry with Basmati Rice": () =>
-      PRICES["beef braising"] * BNF.beefBraising * n / 100
-      + PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["curry paste"] * 60 / 100
-      + PRICES["chopped tomato"] * 200 / 100
-      + PRICES["onion"] * 100 / 100,
-
-    "Lamb Curry with Basmati Rice": () =>
-      PRICES["lamb shoulder"] * BNF.lamb * n / 100
-      + PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["curry paste"] * 80 / 100
-      + PRICES["natural yoghurt"] * 100 / 100
-      + PRICES["chopped tomato"] * 200 / 100,
-
-    "Vegetable Curry with Basmati Rice": () =>
-      PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["curry paste"] * 60 / 100
-      + PRICES["chopped tomato"] * 200 / 100
-      + PRICES["kidney bean"] * 200 / 100
-      + PRICES["spinach"] * 80 / 100
-      + PRICES["onion"] * 100 / 100,
-
-    "Chicken Teriyaki Stir Fry with Basmati Rice": () =>
-      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
-      + PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["teriyaki sauce"] * 60 / 100
-      + PRICES["broccoli"] * BNF.veg * n / 100
-      + PRICES["pepper"] * 100 / 100,
-
-    "Beef Teriyaki Stir Fry with Egg Fried Rice": () =>
-      PRICES["beef steak"] * BNF.beefBraising * n / 100
-      + PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["egg"] * n
-      + PRICES["teriyaki sauce"] * 60 / 100
-      + PRICES["broccoli"] * BNF.veg * n / 100,
-
-    "Pork & Veg Stir Fry with Teriyaki & Rice": () =>
-      PRICES["pork fillet"] * BNF.pork * n / 100
-      + PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["teriyaki sauce"] * 60 / 100
-      + PRICES["pepper"] * 100 / 100,
-
-    "Sweet & Sour Chicken with Rice & Prawn Crackers": () =>
-      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
-      + PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["sweet sour sauce"] * 150 / 100
-      + PRICES["prawn cracker"] * 50 / 100
-      + PRICES["pineapple"] * 100 / 100,
-
-    "Sweet & Sour Pork with Rice & Prawn Crackers": () =>
-      PRICES["pork fillet"] * BNF.pork * n / 100
-      + PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["sweet sour sauce"] * 150 / 100
-      + PRICES["prawn cracker"] * 50 / 100
-      + PRICES["pineapple"] * 100 / 100,
-
-    "Prawn & Vegetable Stir Fry with Egg Fried Rice": () =>
-      PRICES["king prawn"] * BNF.prawn * n / 100
-      + PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["egg"] * n
-      + PRICES["pepper"] * 100 / 100
-      + PRICES["spring onion"] * 50 / 100,
-
-    "Thai Green Chicken Curry with Jasmine Rice": () =>
-      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
-      + PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["curry paste"] * 70 / 100
-      + PRICES["coconut milk"] * 200 / 100
-      + PRICES["green bean"] * 80 / 100
-      + PRICES["spinach"] * 50 / 100,
-
-    "Nepalese Lentil Dal with Rice & Chapati": () =>
-      PRICES["lentil"] * BNF.lentilDry * n / 100
-      + PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["chapati"] * 60 * n / 100
-      + PRICES["chopped tomato"] * 200 / 100
-      + PRICES["onion"] * 100 / 100
-      + PRICES["spinach"] * 80 / 100,
-
-    "Spaghetti Bolognese with Cheesy Garlic Bread": () =>
-      PRICES["beef mince"] * BNF.beefMince * n / 100
-      + PRICES["spaghetti"] * BNF.pastaDry * n / 100
-      + PRICES["chopped tomato"] * 400 / 100
-      + PRICES["cheddar"] * 20 / 100
-      + PRICES["pasta sauce"] * 100 / 100,
-
-    "Chicken Pasta in Homemade Tomato & Basil Sauce": () =>
-      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
-      + PRICES["penne"] * BNF.pastaDry * n / 100
-      + PRICES["chopped tomato"] * 400 / 100
-      + PRICES["tomato puree"] * 40 / 100
-      + PRICES["onion"] * 80 / 100,
-
-    "Creamy Chicken Tagliatelle with Garlic & Mushrooms": () =>
-      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
-      + PRICES["tagliatelle"] * BNF.pastaDry * n / 100
-      + PRICES["double cream"] * BNF.creamSauce * n / 100
-      + PRICES["mushroom"] * 100 / 100
-      + PRICES["parmesan"] * 20 / 100,
-
-    "Sausage Pasta with Vegetables & Tomato Sauce": () =>
-      PRICES["pork sausage"] * BNF.pork * n / 100
-      + PRICES["penne"] * BNF.pastaDry * n / 100
-      + PRICES["chopped tomato"] * 400 / 100
-      + PRICES["pepper"] * 100 / 100
-      + PRICES["onion"] * 80 / 100,
-
-    "Meatballs & Penne in Tomato Sauce": () =>
-      PRICES["beef mince"] * BNF.beefMince * n / 100
-      + PRICES["penne"] * BNF.pastaDry * n / 100
-      + PRICES["egg"] * 1
-      + PRICES["chopped tomato"] * 400 / 100
-      + PRICES["parmesan"] * 20 / 100,
-
-    "Lasagne with Cheesy Garlic Bread": () =>
-      PRICES["beef mince"] * BNF.beefMince * n / 100
-      + PRICES["lasagne sheet"] * 60 * n / 100
-      + PRICES["milk"] * BNF.milkSauce * n / 100
-      + PRICES["butter"] * 25 / 100
-      + PRICES["cheddar"] * 50 / 100
-      + PRICES["chopped tomato"] * 400 / 100,
-
-    "Mushroom & Spinach Pasta in Creamy Sauce": () =>
-      PRICES["mushroom"] * 150 / 100
-      + PRICES["penne"] * BNF.pastaDry * n / 100
-      + PRICES["double cream"] * BNF.creamSauce * n / 100
-      + PRICES["spinach"] * 100 / 100
-      + PRICES["parmesan"] * 25 / 100,
-
-    "Mac & Cheese with Prawns & Garlic Bread": () =>
-      PRICES["king prawn"] * BNF.prawn * n / 100
-      + PRICES["macaroni"] * BNF.pastaDry * n / 100
-      + PRICES["milk"] * BNF.milkSauce * n / 100
-      + PRICES["cheddar"] * 80 / 100
-      + PRICES["butter"] * 25 / 100,
-
-    "Cottage Pie with Frozen Peas": () =>
-      PRICES["beef mince"] * BNF.beefMince * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["frozen pea"] * BNF.veg * n / 100
-      + PRICES["chopped tomato"] * 200 / 100
-      + PRICES["carrot"] * 80 / 100
-      + PRICES["butter"] * 20 / 100
-      + PRICES["milk"] * 50 / 100,
-
-    "Shepherd's Pie with Green Beans & Gravy": () =>
-      PRICES["lamb mince"] * BNF.lamb * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["green bean"] * BNF.veg * n / 100
-      + PRICES["carrot"] * 80 / 100
-      + PRICES["gravy granule"] * 15 / 100
-      + PRICES["butter"] * 20 / 100,
-
-    "Beef & Vegetable Hotpot with Sliced Potato": () =>
-      PRICES["beef braising"] * BNF.beefBraising * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["carrot"] * BNF.veg * n / 100
-      + PRICES["onion"] * 100 / 100,
-
-    "Sausage & Mash with Peas, Carrots & Gravy": () =>
-      PRICES["pork sausage"] * 150 * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["frozen pea"] * BNF.veg * n / 100
-      + PRICES["carrot"] * BNF.veg * n / 100
-      + PRICES["gravy granule"] * 20 / 100,
-
-    "Toad in the Hole with Mash & Green Beans": () =>
-      PRICES["pork sausage"] * 150 * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["green bean"] * BNF.veg * n / 100
-      + PRICES["egg"] * 3
-      + PRICES["milk"] * 100 / 100,
-
-    "Gammon, Egg & Chips with Peas & Pineapple": () =>
-      PRICES["gammon"] * BNF.pork * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["egg"] * n
-      + PRICES["frozen pea"] * BNF.veg * n / 100
-      + PRICES["pineapple"] * 100 / 100,
-
-    "Fish Pie with Mashed Potato & Peas": () =>
-      PRICES["fish pie mix"] * BNF.fish * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["frozen pea"] * BNF.veg * n / 100
-      + PRICES["milk"] * BNF.milkSauce * n / 100
-      + PRICES["cheddar"] * 40 / 100,
-
-    "GF Fish & Chips with Peas or Baked Beans": () =>
-      PRICES["white fish"] * BNF.fish * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["frozen pea"] * BNF.veg * n / 100,
-
-    "Lemon Chicken, Potato & Vegetable Tray Bake": () =>
-      PRICES["chicken thigh"] * BNF.chickenThigh * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["pepper"] * 150 / 100
-      + PRICES["courgette"] * 100 / 100
-      + PRICES["onion"] * 80 / 100,
-
-    "Moussaka with Greek Salad": () =>
-      PRICES["lamb mince"] * BNF.lamb * n / 100
-      + PRICES["aubergine"] * 200 / 100
-      + PRICES["potato"] * 150 * n / 100
-      + PRICES["milk"] * BNF.milkSauce * n / 100
-      + PRICES["egg"] * 2
-      + PRICES["cheddar"] * 40 / 100
-      + PRICES["chopped tomato"] * 200 / 100
-      + PRICES["feta"] * 50 / 100,
-
-    "Chicken Bobotie with Basmati Rice": () =>
-      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
-      + PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["egg"] * 2
-      + PRICES["milk"] * 60 / 100
-      + PRICES["apricot jam"] * 40 / 100,
-
-    "Beef Bobotie with Basmati Rice": () =>
-      PRICES["beef mince"] * BNF.beefMince * n / 100
-      + PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["egg"] * 2
-      + PRICES["milk"] * 60 / 100
-      + PRICES["apricot jam"] * 40 / 100,
-
-    "Chicken Potjie with Baby Potatoes & Butternut": () =>
-      PRICES["chicken thigh"] * BNF.chickenThigh * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["butternut squash"] * 150 / 100
-      + PRICES["chopped tomato"] * 200 / 100
-      + PRICES["onion"] * 80 / 100,
-
-    "Chilli Con Carne with Rice & Nachos": () =>
-      PRICES["beef mince"] * BNF.beefMince * n / 100
-      + PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["kidney bean"] * 200 / 100
-      + PRICES["chopped tomato"] * 400 / 100
-      + PRICES["tortilla chip"] * 50 / 100,
-
-    "Cheese & Bacon Burger with Waffle Fries": () =>
-      PRICES["beef burger"] * BNF.beefBurger * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["cheddar"] * 30 * n / 100
-      + PRICES["bacon"] * 50 * n / 100,
-
-    "Chicken Burger with Wedges, Lettuce & Tomato": () =>
-      PRICES["chicken breast"] * BNF.chickenBreast * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["lettuce"] * 0.5,
-
-    "Chicken Wings with Potato Wedges & Salad": () =>
-      PRICES["chicken thigh"] * 200 * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["lettuce"] * 0.5,
-
-    "Chicken Dippers with Chips & Baked Beans": () =>
-      PRICES["chicken dippers"] * 150 * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["baked bean"] * 200 / 100,
-
-    "Hot Dogs with Chips & Side Salad": () =>
-      PRICES["hot dog"] * 100 * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["lettuce"] * 0.5,
-
-    "Sausage Rolls with Wedges & Sweetcorn": () =>
-      PRICES["sausage roll"] * 150 * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["sweetcorn"] * 100 / 100,
-
-    "Pizza with Potato Salad & Coleslaw": () =>
-      PRICES["pasta"] * 100 * n / 100  // dough base approximation
-      + PRICES["mozzarella"] * 50 * n / 100
-      + PRICES["tomato puree"] * 40 / 100
-      + PRICES["potato"] * 100 * n / 100,
-
-    "Roasted Salmon with Potato Wedges & Green Beans": () =>
-      PRICES["salmon"] * BNF.fish * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["green bean"] * BNF.veg * n / 100,
-
-    "Fish Fingers & Chips with Beans or Peas": () =>
-      PRICES["fish finger"] * 120 * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["baked bean"] * 150 / 100,
-
-    "Full Cooked Breakfast with GF Toast & Hash Browns": () =>
-      PRICES["pork sausage"] * 100 * n / 100
-      + PRICES["bacon"] * 50 * n / 100
-      + PRICES["egg"] * n
-      + PRICES["baked bean"] * 150 / 100
-      + PRICES["mushroom"] * 60 * n / 100
-      + PRICES["hash brown"] * 100 * n / 100,
-
-    "Quiche with Potato Wedges & Greek Salad": () =>
-      PRICES["egg"] * n
-      + PRICES["milk"] * 100 / 100
-      + PRICES["cheddar"] * 60 / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["feta"] * 50 / 100,
-
-    "Loaded Baked Potato with Savoury Mince & Cheese": () =>
-      PRICES["beef mince"] * 100 * n / 100
-      + PRICES["baking potato"] * n * 0.79 / 4
-      + PRICES["cheddar"] * 40 * n / 100
-      + PRICES["chopped tomato"] * 200 / 100,
-
-    "Pork Chops with Apple Sauce, Mash & Green Beans": () =>
-      PRICES["pork chop"] * BNF.pork * n / 100
-      + PRICES["potato"] * BNF.potato * n / 100
-      + PRICES["green bean"] * BNF.veg * n / 100
-      + PRICES["apple sauce"] * 60 / 100,
-
-    "Oven Baked Rice with Chicken, Chorizo & Tomato": () =>
-      PRICES["chicken thigh"] * BNF.chickenThigh * n / 100
-      + PRICES["basmati rice"] * BNF.riceDry * n / 100
-      + PRICES["chopped tomato"] * 200 / 100
-      + PRICES["onion"] * 80 / 100
-      + PRICES["pepper"] * 100 / 100,
-  };
-
-  // Run calculation, add storecupboard buffer, round to 2dp
-  const base = recipes[mealName] ? recipes[mealName]() : 8.00;
-  const buffer = BNF.storecupboard * n;
-  return Math.max(1.50, parseFloat((base + buffer).toFixed(2)));
-};
 
 const ALLERGENS = [
   {id:"gluten",label:"Gluten",icon:"🌾"},{id:"crustaceans",label:"Crustaceans",icon:"🦐"},
@@ -1378,58 +118,6 @@ const LOAD_MSGS = [
   "Balancing proteins across the week...",
   "Almost ready — building your perfect plan!",
 ];
-
-// ─── BUILD SHOPPING LIST FROM APPROVED PLAN ───────────────────────────────────
-// Only uses ingredients from the 7 chosen meals — no generic defaults
-const buildShoppingList = (plan) => {
-  const byCategory = {
-    "Proteins & Fish": [],
-    "Fresh Vegetables & Salad": [],
-    "Tinned & Jarred Goods": [],
-    "Pasta, Rice & Grains": [],
-    "Dairy & Eggs": [],
-    "Bread, Pastry & Baked": [],
-    "Sauces, Spices & Condiments": [],
-    "Frozen": [],
-    "Other": [],
-  };
-
-  const categorise = (item) => {
-    const i = item.toLowerCase();
-    if (/chicken|beef|pork|lamb|salmon|fish|prawn|sausage|bacon|gammon|mince|steak|thigh|breast|wing|joint|fillet|nugget|dipper/.test(i)) return "Proteins & Fish";
-    if (/potato|rice|pasta|spaghetti|penne|tagliatelle|macaroni|lasagne|naan|chapati|tortilla|chip|wedge/.test(i)) return "Pasta, Rice & Grains";
-    if (/tinned|tin |jar |passata|coconut milk|stock cube|baked bean|kidney bean|chickpea/.test(i)) return "Tinned & Jarred Goods";
-    if (/milk|cream|butter|cheese|egg|yoghurt|feta|mozzarella|parmesan|cheddar/.test(i)) return "Dairy & Eggs";
-    if (/frozen/.test(i)) return "Frozen";
-    if (/bread|bun|roll|pastry|wrap|crackers|cracker/.test(i)) return "Bread, Pastry & Baked";
-    // Fresh veg BEFORE sauces — peppers (bell/capsicum) must not match "pepper" spice
-    if (/onion|garlic|ginger|carrot|celery|bell pepper|capsicum|red pepper|green pepper|yellow pepper|courgette|aubergine|mushroom|spinach|lettuce|tomato|cucumber|lemon|lime|spring onion|butternut|squash|broccoli|cabbage|bean|pea|sweetcorn|salad|apple|pineapple|pepper/.test(i)) return "Fresh Vegetables & Salad";
-    if (/sauce|oil|spice|herb|seasoning|salt|cumin|paprika|turmeric|thyme|rosemary|coriander|basil|dill|parsley|bay|cinnamon|mustard|ketchup|mayo|vinegar|puree|paste/.test(i)) return "Sauces, Spices & Condiments";
-    return "Other";
-  };
-
-  const seen = new Set();
-  plan.forEach(item => {
-    const dbMeal = MEALS.find(m => m.name === item.meal);
-    if (!dbMeal || !dbMeal.ingredients) return;
-    dbMeal.ingredients.forEach(ing => {
-      // Combine duplicates by item name (case-insensitive)
-      const key = ing.item.toLowerCase().trim();
-      if (!seen.has(key)) {
-        seen.add(key);
-        const cat = categorise(ing.item);
-        byCategory[cat].push({
-          item: ing.item,
-          qty: ing.qty,
-          note: ing.note || null,
-          day: item.day,
-        });
-      }
-    });
-  });
-
-  return byCategory;
-};
 
 // ─── STYLES ───────────────────────────────────────────────────────────────────
 const CSS = `
@@ -1503,7 +191,7 @@ body{font-family:'Outfit',sans-serif;background:${B.bg};color:${B.text};min-heig
 .bdg{font-size:11px;padding:3px 10px;border-radius:20px;background:${B.soft};color:${B.primary};font-weight:500;}
 .bdg.amber{background:${B.softAmber};color:#92600A;}
 .bdg.danger{background:${B.dangerBg};color:${B.danger};}
-.meal-c{background:${B.card};border-radius:16px;padding:16px 18px;margin-bottom:10px;border:1px solid ${B.border};transition:box-shadow 0.15s;}
+.meal-c{background:${B.card};border-radius:16px;padding:16px 18px;margin-bottom:10px;border:1px solid ${B.border};display:flex;align-items:flex-start;gap:12px;transition:box-shadow 0.15s;}
 .meal-c:hover{box-shadow:0 4px 20px rgba(27,94,80,0.08);}
 .meal-day{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.09em;color:${B.faint};margin-bottom:2px;}
 .meal-name{font-size:14px;font-weight:500;color:${B.text};line-height:1.4;}
@@ -1515,46 +203,19 @@ body{font-family:'Outfit',sans-serif;background:${B.bg};color:${B.text};min-heig
 .m-cost{font-size:12px;font-weight:600;color:${B.primary};white-space:nowrap;}
 .sw-btn{background:transparent;border:1px solid ${B.border};border-radius:20px;padding:5px 10px;font-size:11px;font-weight:500;color:${B.faint};cursor:pointer;white-space:nowrap;transition:all 0.15s;font-family:'Outfit',sans-serif;}
 .sw-btn:hover{border-color:${B.accent};color:${B.accent};}
-
-/* ── Meal customisation dropdowns ── */
-.custom-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
-.custom-sel-wrap{flex:1;min-width:140px;}
-.custom-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:${B.faint};margin-bottom:4px;}
-.custom-sel{width:100%;padding:7px 10px;border-radius:10px;border:1.5px solid ${B.border};font-family:'Outfit',sans-serif;font-size:12px;background:${B.bg};color:${B.text};cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239EAAB6' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
-.custom-sel:focus{outline:2px solid ${B.primary};border-color:transparent;}
-.custom-sel.changed{border-color:${B.accent};background-color:${B.softAmber};}
-.custom-changed-note{font-size:10px;color:#92600A;margin-top:3px;display:flex;align-items:center;gap:3px;}
-
-/* ── Recipe links ── */
 .recipe-btn{background:transparent;border:1px solid ${B.primary};border-radius:20px;padding:4px 9px;font-size:10px;font-weight:500;color:${B.primary};cursor:pointer;transition:all 0.15s;font-family:'Outfit',sans-serif;margin-top:4px;}
 .recipe-btn:hover{background:${B.soft};}
 .recipe-links{margin-top:8px;padding:10px;background:${B.soft};border-radius:10px;font-size:11px;color:${B.primary};}
 .recipe-links a{display:block;color:${B.primary};text-decoration:none;padding:3px 0;border-bottom:1px solid ${B.border};}
 .recipe-links a:last-child{border-bottom:none;}
 .recipe-links a:hover{text-decoration:underline;}
-.recipe-disclaimer{font-size:10px;color:${B.muted};background:${B.softAmber};border-radius:8px;padding:7px 10px;margin-top:8px;line-height:1.5;}
-
 .back-b{background:transparent;border:none;color:${B.faint};font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:5px;padding:6px 0;margin-bottom:14px;}
 .back-b:hover{color:${B.muted};}
-
-/* ── Shopping list ── */
-.shop-sec{margin-bottom:18px;}
+.shop-sec{margin-bottom:14px;}
 .shop-t{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:${B.faint};margin-bottom:7px;padding-bottom:4px;border-bottom:1px solid ${B.border};}
-.shop-i{font-size:13px;color:${B.text};padding:8px 0;border-bottom:1px solid ${B.bg};display:flex;align-items:flex-start;gap:10px;}
+.shop-i{font-size:13px;color:${B.text};padding:7px 0;border-bottom:1px solid ${B.bg};display:flex;align-items:center;gap:10px;}
 .shop-i:last-child{border-bottom:none;}
-.shop-qty{font-size:11px;color:${B.muted};margin-top:1px;}
-.shop-note{font-size:10px;color:#92600A;background:${B.softAmber};border-radius:6px;padding:2px 6px;display:inline-block;margin-top:2px;}
-.chk{width:17px;height:17px;border:1.5px solid ${B.border};border-radius:5px;flex-shrink:0;cursor:pointer;margin-top:2px;}
-.print-bar{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
-.print-btn{flex:1;min-width:140px;padding:11px 16px;border-radius:14px;border:1.5px solid ${B.primary};background:transparent;color:${B.primary};font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px;}
-.print-btn:hover{background:${B.soft};}
-@media print{
-  .no-print{display:none!important;}
-  .app{padding:0;}
-  .print-bar{display:none;}
-  body{background:#fff;}
-}
-
+.chk{width:17px;height:17px;border:1.5px solid ${B.border};border-radius:5px;flex-shrink:0;cursor:pointer;}
 .up-card{background:${B.primary};border-radius:20px;padding:28px;color:#fff;text-align:center;margin-bottom:14px;}
 .up-h{font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin-bottom:8px;}
 .up-d{font-size:13px;opacity:0.82;line-height:1.65;margin-bottom:20px;}
@@ -1610,11 +271,8 @@ export default function MealWise() {
   const [loadMsg, setLoadMsg] = useState(0);
   const [swapping, setSwapping] = useState(null);
   const [recipeOpen, setRecipeOpen] = useState(null);
-  // customisations: {[index]: {starch, veg}}
-  const [customisations, setCustomisations] = useState({});
   const [supers, setSupers] = useState([]);
   const [email, setEmail] = useState("");
-  const [postcode, setPostcode] = useState("");
   const [gdpr, setGdpr] = useState(false);
   const [stars, setStars] = useState(0);
   const [feedback, setFeedback] = useState("");
@@ -1632,7 +290,7 @@ export default function MealWise() {
     familySize:4, glutenFree:false, sundayRoast:true,
     proteins:["chicken","beef","pork"], allergens:[],
     cuisines:[], fridaySurprise:false, fridayCuisines:[],
-    maxPasta:2, maxRice:2, maxPotato:3,
+    maxPasta:2, maxRice:2, maxPotato:5,
   });
 
   useEffect(() => {
@@ -1651,110 +309,43 @@ export default function MealWise() {
     return true;
   });
 
-  // ── Similarity guard: prevents back-to-back meals that feel the same
-  // e.g. Cottage Pie (beef+potato+british-classic) then Shepherd's Pie (lamb+potato+british-classic)
-  const tooSimilar = (a, b) => {
-    if (!a || !b) return false;
-    // Same carb AND same cuisine group = too similar regardless of protein
-    const sharedCuisine = a.cuisine.some(c => b.cuisine.includes(c));
-    if (sharedCuisine && a.carb === b.carb) return true;
-    // Same protein AND same carb = too similar
-    if (a.protein === b.protein && a.carb === b.carb) return true;
-    return false;
-  };
-
   const generate = async () => {
-    setLoading(true); setLoadMsg(0); setCustomisations({});
+    setLoading(true); setLoadMsg(0);
     const p = pool();
-
-    const sys = `You are a strict family meal planner. Choose EXACTLY 7 dinners for Saturday through Friday.
-
-MANDATORY RULES — violating any rule means the plan is REJECTED:
-1. Sunday = british-roast cuisine ONLY (if sundayRoast=true)
-2. Friday must match fridayCuisines (if fridaySurprise=true)
-3. CARB TOTALS across all 7 meals: pasta count MUST be <= ${prefs.maxPasta}, rice count MUST be <= ${prefs.maxRice}, potato count MUST be <= ${prefs.maxPotato}. Count every single meal before finalising.
-4. No two consecutive days with the same carb type AND same cuisine group (e.g. do NOT put Cottage Pie on Wednesday then Shepherd's Pie on Thursday — both are british-classic+potato)
-5. No two consecutive days with the same protein AND same carb type
-6. No meal repeated
-7. Vary the default veg across the week — avoid the same default veg (e.g. peas) appearing more than twice across the 7 meals
-8. Copy meal names EXACTLY as given
-
-Return ONLY this JSON (no explanation, no markdown):
-{"plan":[{"day":"Saturday","meal":"EXACT name","reason":"brief reason"},{"day":"Sunday",...},{"day":"Monday",...},{"day":"Tuesday",...},{"day":"Wednesday",...},{"day":"Thursday",...},{"day":"Friday",...}]}`;
-
+    const sys = `You are a family meal planner. Pick 7 dinners (Saturday–Friday) from the database.
+Rules: Sunday MUST be british-roast if sundayRoast true. If fridaySurprise true, Friday must match fridayCuisines. Max pasta=${prefs.maxPasta}, max rice=${prefs.maxRice}. No repeats. Vary proteins and cuisines.
+Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one sentence"},...]}`;
     try {
       const r = await fetch("https://api.anthropic.com/v1/messages",{
         method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:1400,system:sys,
-          messages:[{role:"user",content:`Preferences: ${JSON.stringify({...prefs,maxPasta:prefs.maxPasta,maxRice:prefs.maxRice,maxPotato:prefs.maxPotato})}\n\nAvailable meals (use EXACT names):\n${p.map(m=>`- "${m.name}" [protein:${m.protein}, carb:${m.carb}, cuisine:${m.cuisine[0]}]`).join("\n")}\n\nRemember to count: pasta<=${prefs.maxPasta}, rice<=${prefs.maxRice}, potato<=${prefs.maxPotato}. Return JSON only.`}]})
+        body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:1200,system:sys,
+          messages:[{role:"user",content:`Prefs:${JSON.stringify(prefs)}\nPool:${JSON.stringify(p.map(m=>({name:m.name,protein:m.protein,carb:m.carb,cuisine:m.cuisine})))}\nReturn JSON only.`}]})
       });
       const d = await r.json();
       const txt = d.content?.[0]?.text||"";
       const parsed = JSON.parse(txt.replace(/```json|```/g,"").trim());
-
-      const mapped = parsed.plan.map(item=>{
-        const db = p.find(m=>m.name===item.meal) || p.find(m=>m.name.toLowerCase().includes(item.meal.split(" ")[0].toLowerCase()));
+      setPlan(parsed.plan.map(item=>{
+        const db=p.find(m=>m.name===item.meal)||p.find(m=>m.name.toLowerCase().startsWith(item.meal.split(" ")[0].toLowerCase()));
         return{...item,protein:db?.protein||"chicken",carb:db?.carb||"potato",
-          cost: calcMealCost(db?.name||item.meal, prefs.familySize),
-          allergens:db?.allergens||[],meal:db?.name||item.meal,
-          defaultStarch:db?.defaultStarch||"",defaultVeg:db?.defaultVeg||""};
-      });
-
-      // Validate carb counts — if AI ignored the limits, fall back to deterministic
-      const tally = {pasta:0,rice:0,potato:0,other:0};
-      mapped.forEach(m => tally[m.carb]=(tally[m.carb]||0)+1);
-      const ok = tally.pasta<=prefs.maxPasta && tally.rice<=prefs.maxRice && tally.potato<=prefs.maxPotato;
-      setPlan(ok ? mapped : fallback(p));
+          cost:db?(db.cost*(prefs.familySize/4)).toFixed(2):"8.00",
+          allergens:db?.allergens||[],meal:db?.name||item.meal};
+      }));
     } catch { setPlan(fallback(p)); }
     setLoading(false); setScreen("plan");
   };
 
-  // ── Deterministic fallback: guaranteed to respect ALL carb + similarity rules
   const fallback = (p) => {
-    const used=[], carbs={pasta:0,rice:0,potato:0,other:0}, vegCount={};
-    let prevMeal = null;
+    const used=[],carbs={};
     return DAYS.map(day=>{
-      let candidates = p.filter(m=>!used.includes(m.name));
-
-      // Day-specific locks
-      if(day==="Sunday"&&prefs.sundayRoast)
-        candidates = candidates.filter(m=>m.cuisine.includes("british-roast"));
-      if(day==="Friday"&&prefs.fridaySurprise&&prefs.fridayCuisines.length)
-        candidates = candidates.filter(m=>m.cuisine.some(c=>prefs.fridayCuisines.includes(c)));
-
-      // Enforce carb limits
-      candidates = candidates.filter(m=>
-        !(m.carb==="pasta" && carbs.pasta>=prefs.maxPasta) &&
-        !(m.carb==="rice"  && carbs.rice>=prefs.maxRice)   &&
-        !(m.carb==="potato"&& carbs.potato>=prefs.maxPotato)
-      );
-
-      // Avoid back-to-back similar meals
-      if(prevMeal) candidates = candidates.filter(m=>!tooSimilar(m, prevMeal));
-
-      // Avoid same default veg more than twice across the week
-      const vegFiltered = candidates.filter(m=>!m.defaultVeg||(vegCount[m.defaultVeg]||0)<2);
-      if(vegFiltered.length) candidates = vegFiltered;
-
-      // Safety: relax similarity rule if needed
-      if(!candidates.length) candidates = p.filter(m=>
-        !used.includes(m.name) &&
-        !(m.carb==="pasta" && carbs.pasta>=prefs.maxPasta) &&
-        !(m.carb==="rice"  && carbs.rice>=prefs.maxRice)   &&
-        !(m.carb==="potato"&& carbs.potato>=prefs.maxPotato)
-      );
-      if(!candidates.length) candidates = p.filter(m=>!used.includes(m.name));
-      if(!candidates.length) candidates = p;
-
-      const pick = candidates[Math.floor(Math.random()*candidates.length)];
-      used.push(pick.name);
-      carbs[pick.carb]=(carbs[pick.carb]||0)+1;
-      if(pick.defaultVeg) vegCount[pick.defaultVeg]=(vegCount[pick.defaultVeg]||0)+1;
-      prevMeal = pick;
+      let pool2=p.filter(m=>!used.includes(m.name));
+      if(day==="Sunday"&&prefs.sundayRoast) pool2=pool2.filter(m=>m.cuisine.includes("british-roast"));
+      if(day==="Friday"&&prefs.fridaySurprise&&prefs.fridayCuisines.length) pool2=pool2.filter(m=>m.cuisine.some(c=>prefs.fridayCuisines.includes(c)));
+      pool2=pool2.filter(m=>!(m.carb==="pasta"&&(carbs.pasta||0)>=prefs.maxPasta)&&!(m.carb==="rice"&&(carbs.rice||0)>=prefs.maxRice));
+      if(!pool2.length) pool2=p.filter(m=>!used.includes(m.name));
+      const pick=pool2[Math.floor(Math.random()*pool2.length)]||p[0];
+      used.push(pick.name); carbs[pick.carb]=(carbs[pick.carb]||0)+1;
       return{day,meal:pick.name,protein:pick.protein,carb:pick.carb,
-        cost: calcMealCost(pick.name, prefs.familySize),
-        allergens:pick.allergens,
-        reason:"A great choice for the week.",defaultStarch:pick.defaultStarch||"",defaultVeg:pick.defaultVeg||""};
+        cost:(pick.cost*(prefs.familySize/4)).toFixed(2),allergens:pick.allergens,reason:"A great choice."};
     });
   };
 
@@ -1769,18 +360,8 @@ Return ONLY this JSON (no explanation, no markdown):
     const pick=pl[Math.floor(Math.random()*pl.length)];
     const np=[...plan];
     np[i]={...np[i],meal:pick.name,protein:pick.protein,carb:pick.carb,
-      cost: calcMealCost(pick.name, prefs.familySize),
-      allergens:pick.allergens,
-      defaultStarch:pick.defaultStarch||"",defaultVeg:pick.defaultVeg||""};
-    // Clear customisation for swapped meal
-    const nc={...customisations};
-    delete nc[i];
-    setCustomisations(nc);
+      cost:(pick.cost*(prefs.familySize/4)).toFixed(2),allergens:pick.allergens};
     setPlan(np); setSwapping(null);
-  };
-
-  const updateCustom = (i, field, val) => {
-    setCustomisations(c=>({...c,[i]:{...c[i],[field]:val}}));
   };
 
   const searchFridge = async () => {
@@ -1815,56 +396,17 @@ Return ONLY this JSON (no explanation, no markdown):
     } catch { setAiMsg("ok:Looks great — we'll review it shortly!"); }
   };
 
-  // ── Veg cost adjustments when user changes default veg ──
-  // Maps VEG_OPTIONS to approximate cost delta vs "no veg" baseline (£ for family)
-  const VEG_COSTS = {
-    "Frozen Peas":            n => PRICES["frozen pea"]  * BNF.veg * n / 100,
-    "Green Beans":            n => PRICES["green bean"]  * BNF.veg * n / 100,
-    "Broccoli":               n => PRICES["broccoli"]    * BNF.veg * n / 100,
-    "Carrots":                n => PRICES["carrot"]      * BNF.veg * n / 100,
-    "Sweetcorn":              n => PRICES["sweetcorn"]   * 100      / 100,
-    "Cabbage":                n => PRICES["cabbage"]     * BNF.veg * n / 100,
-    "Cauliflower":            n => PRICES["broccoli"]    * BNF.veg * n / 100, // similar price
-    "Spinach":                n => PRICES["spinach"]     * BNF.veg * n / 100,
-    "Mixed Salad":            n => PRICES["lettuce"]     * 0.5,
-    "Greek Salad":            n => PRICES["feta"]        * 50 / 100 + PRICES["cucumber"] * 0.3,
-    "Roasted Mediterranean Veg": n => PRICES["courgette"] * 100/100 + PRICES["pepper"] * 100/100,
-    "Courgette":              n => PRICES["courgette"]   * BNF.veg * n / 100,
-    "Leeks":                  n => PRICES["onion"]       * BNF.veg * n / 100, // similar price
-    "Frozen Mixed Veg":       n => PRICES["frozen pea"]  * BNF.veg * n / 100,
-    "Baked Beans":            n => PRICES["baked bean"]  * 150      / 100,
-    "No veg":                 n => 0,
-  };
+  const total = plan?plan.reduce((s,m)=>s+parseFloat(m.cost),0).toFixed(2):0;
 
-  // Returns the displayed cost for a meal card — base cost ± veg swap delta
-  const displayCost = (item, idx) => {
-    const custom = customisations[idx] || {};
-    const baseVeg  = item.defaultVeg;
-    const chosenVeg = custom.veg || baseVeg;
-    const n = prefs.familySize;
-    if (chosenVeg === baseVeg) return parseFloat(item.cost);
-    // Add cost of new veg, subtract cost of default veg
-    const newVegCost  = VEG_COSTS[chosenVeg]  ? VEG_COSTS[chosenVeg](n)  : 0;
-    const baseVegCost = VEG_COSTS[baseVeg]    ? VEG_COSTS[baseVeg](n)    : 0;
-    return Math.max(1.50, parseFloat((parseFloat(item.cost) + newVegCost - baseVegCost).toFixed(2)));
-  };
+  const cleanMealName = (meal) => meal.split(/\swith\s/i)[0].split(",")[0].trim();
 
-  const total = plan
-    ? plan.reduce((s, m, i) => s + displayCost(m, i), 0).toFixed(2)
-    : 0;
-
-  // ── Recipe search: DuckDuckGo as primary (opens correctly), BBC Good Food & Pinch of Nom as direct links
-  // Allergen modifier appended when relevant
-  const recipeSearch = (meal, selectedAllergens) => {
-    const allergenMod = selectedAllergens.length > 0
-      ? " " + selectedAllergens.slice(0,2).map(a=>a==="gluten"?"gluten free":a==="milk"?"dairy free":a+" free").join(" ")
-      : "";
-    const query = encodeURIComponent(meal + allergenMod);
+  const recipeSearch = (meal) => {
+    const clean = cleanMealName(meal);
+    const allergenMod = prefs.glutenFree ? " gluten free" : "";
     return [
-      {label:"🔍 Search all recipes (DuckDuckGo)", url:`https://duckduckgo.com/?q=${query}+recipe`},
-      {label:"BBC Good Food", url:`https://www.bbcgoodfood.com/search?q=${query}`},
-      {label:"Pinch of Nom", url:`https://pinchofnom.com/?s=${encodeURIComponent(meal)}`},
-      {label:"All Recipes UK", url:`https://www.allrecipes.com/search?q=${query}`},
+      {label:"BBC Good Food",url:`https://www.bbcgoodfood.com/search?q=${encodeURIComponent(clean)}`},
+      {label:"Pinch of Nom",url:`https://pinchofnom.com/?s=${encodeURIComponent(clean)}`},
+      {label:"DuckDuckGo",url:`https://duckduckgo.com/?q=${encodeURIComponent(meal+" recipe"+allergenMod)}`},
     ];
   };
 
@@ -1896,7 +438,7 @@ Return ONLY this JSON (no explanation, no markdown):
           {sugSent?" Your meal suggestion is queued for review!":""}
         </div>
         <div style={{maxWidth:320,margin:"28px auto 0"}}>
-          <button className="cta" onClick={()=>{setPlan(null);setFbSent(false);setSugSent(false);setEmail("");setPostcode("");setCustomisations({});setScreen("prefs");}}>Plan next week →</button>
+          <button className="cta" onClick={()=>{setPlan(null);setFbSent(false);setSugSent(false);setEmail("");setScreen("prefs");}}>Plan next week →</button>
           <button className="cta ghost" style={{marginTop:8}} onClick={()=>setScreen("shopping")}>Back to shopping list</button>
         </div>
       </div>
@@ -1907,7 +449,7 @@ Return ONLY this JSON (no explanation, no markdown):
     <><style>{CSS}</style>
     <div className="app">
       <div className="hero"><div className="logo">Get<em>Meal</em>Wise</div></div>
-      <button className="back-b no-print" onClick={()=>setScreen("shopping")}>← Back</button>
+      <button className="back-b" onClick={()=>setScreen("shopping")}>← Back</button>
       <div className="fb-card">
         <div className="fb-h">How was your experience?</div>
         <div className="fb-s">Every suggestion gets read and tracked — popular requests get built.</div>
@@ -1935,84 +477,28 @@ Return ONLY this JSON (no explanation, no markdown):
     </div></>
   );
 
-  // ── SHOPPING LIST SCREEN ────────────────────────────────────────────────────
-  if(screen==="shopping") {
-    const shoppingList = buildShoppingList(plan);
-    const hasItems = Object.values(shoppingList).some(arr=>arr.length>0);
-    return (
+  if(screen==="shopping") return (
     <><style>{CSS}</style>
     <div className="app">
-      <div className="hero no-print"><div className="logo">Get<em>Meal</em>Wise</div></div>
-      <button className="back-b no-print" onClick={()=>setScreen("plan")}>← Back to meal plan</button>
-
-      {/* Print / action bar */}
-      <div className="print-bar no-print">
-        <button className="print-btn" onClick={()=>window.print()}>
-          🖨️ Print shopping list
-        </button>
-        <button className="print-btn" onClick={()=>{
-          const text = Object.entries(shoppingList)
-            .filter(([,items])=>items.length>0)
-            .map(([cat,items])=>`${cat.toUpperCase()}\n`+items.map(i=>`- ${i.item}  (${i.qty})${i.note?" ["+i.note+"]":""}`).join("\n"))
-            .join("\n\n");
-          navigator.clipboard?.writeText(text).then(()=>alert("Shopping list copied to clipboard!"));
-        }}>
-          📋 Copy to clipboard
-        </button>
-      </div>
-
+      <div className="hero"><div className="logo">Get<em>Meal</em>Wise</div></div>
+      <button className="back-b" onClick={()=>setScreen("plan")}>← Back to meal plan</button>
       <div className="card">
         <div className="card-h">Your shopping list</div>
-        <div className="card-s" style={{marginBottom:6}}>
-          Built from your approved 7-day plan · {plan?.length||0} meals · family of {prefs.familySize}
+        <div className="card-s">Based on your approved 7-day meal plan for the week</div>
+        <div className="shop-sec">
+          <div className="shop-t">Proteins this week</div>
+          {Object.entries(plan.reduce((a,m)=>{a[m.protein]=(a[m.protein]||0)+1;return a},{})).map(([p,n])=>(
+            <div className="shop-i" key={p}><div className="chk"/>{pIcon[p]||"🍽️"} {p.charAt(0).toUpperCase()+p.slice(1)} — {n} meal{n>1?"s":""}</div>
+          ))}
         </div>
-
-        {/* Customisation summary — show any starch/veg changes */}
-        {Object.keys(customisations).length > 0 && (
-          <div style={{fontSize:11,color:"#92600A",background:B.softAmber,borderRadius:8,padding:"8px 10px",marginBottom:14}}>
-            ✏️ <strong>Your personal tweaks this week:</strong>{" "}
-            {Object.entries(customisations).map(([i,c])=>{
-              const meal = plan[i];
-              const parts=[];
-              if(c.starch&&c.starch!==meal.defaultStarch) parts.push(`${meal.day}: ${c.starch} instead of ${meal.defaultStarch}`);
-              if(c.veg&&c.veg!==meal.defaultVeg) parts.push(`${meal.day}: ${c.veg} instead of ${meal.defaultVeg}`);
-              return parts;
-            }).flat().join(" · ")}
-          </div>
-        )}
-
-        {hasItems ? Object.entries(shoppingList).map(([category, items]) =>
-          items.length === 0 ? null : (
-            <div className="shop-sec" key={category}>
-              <div className="shop-t">{category}</div>
-              {items.map((ing, n) => (
-                <div className="shop-i" key={n}>
-                  <div className="chk"/>
-                  <div style={{flex:1}}>
-                    <div>{ing.item}</div>
-                    <div className="shop-qty">{ing.qty}</div>
-                    {ing.note && <div className="shop-note">⚠ {ing.note}</div>}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )
-        ) : (
-          <div style={{fontSize:13,color:B.muted,padding:"20px 0",textAlign:"center"}}>
-            No ingredients found — please approve a plan first.
-          </div>
-        )}
-
-        <div className="notice">
-          Quantities are per-meal guides scaled to {prefs.familySize} people. Always check your cupboard stocks before shopping!
+        <div className="shop-sec">
+          <div className="shop-t">Store cupboard & staples</div>
+          {["White potatoes (large bag)","Carrots","White onions","Fresh garlic","Frozen peas","Frozen sweetcorn","Chicken stock cubes","Beef stock cubes","Tomato puree","Tinned chopped tomatoes","GF Gravy granules","Basmati / long grain rice","Olive oil","Fresh roasting herb mix","Butter or block margarine","Cheddar cheese"].map((i,n)=>(
+            <div className="shop-i" key={n}><div className="chk"/>{i}</div>
+          ))}
         </div>
-
-        <div style={{fontSize:11,color:B.muted,background:B.soft,borderRadius:12,padding:"12px 14px",marginTop:14,lineHeight:1.7}}>
-          <strong style={{color:B.primary}}>💡 About our cost estimates</strong><br/>
-          Meal costs are calculated using British Nutrition Foundation recommended portion sizes for the main protein, vegetables and carbs. They do not include storecupboard staples such as oils, seasonings, herbs or tomato purée — we add a small buffer per meal to account for these. Prices are based on Sainsbury's data (April 2026) and are a guide only. Our community pricing model will build a richer, multi-supermarket picture over time as families share their receipts.
-        </div>
+        <div className="notice">Cost estimates based on typical UK prices. Upload your receipt below to help build real community pricing data!</div>
       </div>
-
       <div className="up-card">
         <div className="up-h">Help build the UK's meal cost map 🇬🇧</div>
         <div className="up-d">Upload your supermarket receipt and help families find the best value meals across every major UK supermarket. We'll send you a free weekly community report in return.</div>
@@ -2021,31 +507,16 @@ Return ONLY this JSON (no explanation, no markdown):
           {SUPERMARKETS.map(s=><div key={s} className={`sup-c${supers.includes(s)?" on":""}`} onClick={()=>setSupers(p=>p.includes(s)?p.filter(x=>x!==s):[...p,s])}>{s}</div>)}
         </div>
         <input className="e-inp" type="email" placeholder="Your email address" value={email} onChange={e=>setEmail(e.target.value)}/>
-
-        {/* Postcode field */}
-        <input
-          className="e-inp"
-          type="text"
-          placeholder="Your postcode area e.g. ST4, SO14, G1 (optional)"
-          value={postcode}
-          maxLength={4}
-          onChange={e=>setPostcode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,""))}
-        />
-        <div style={{fontSize:10,opacity:0.65,textAlign:"left",marginBottom:10,lineHeight:1.5,padding:"0 2px"}}>
-          📍 Just your outward postcode (the first part — e.g. ST4 not ST4 1AA). This helps us build a geographic map of food prices across the UK. We never store your full address.
-        </div>
-
         <div className="gdpr">
           <input type="checkbox" checked={gdpr} onChange={e=>setGdpr(e.target.checked)}/>
-          <div className="gdpr-t">I agree to receive the free GetMealWise weekly community report by email. I can unsubscribe any time. My postcode area may be used anonymously in community pricing reports. Data is never sold or shared.</div>
+          <div className="gdpr-t">I agree to receive the free GetMealWise weekly community report by email. I can unsubscribe any time. Data is never sold or shared.</div>
         </div>
         <button className="up-cta" disabled={!email||!gdpr} onClick={()=>setScreen("feedback")}>📧 Upload receipt & join the community</button>
         <span className="skip" onClick={()=>setScreen("feedback")}>Skip for now</span>
       </div>
     </div></>
-  );}
+  );
 
-  // ── MEAL PLAN SCREEN ────────────────────────────────────────────────────────
   if(screen==="plan"&&plan) return (
     <><style>{CSS}</style>
     <div className="app">
@@ -2055,7 +526,6 @@ Return ONLY this JSON (no explanation, no markdown):
           <button className="meal-now" onClick={()=>setShowFridge(!showFridge)}>⚡ Meal Now Help!</button>
         </div>
       </div>
-
       {showFridge&&(
         <div className="fridge-card">
           <div className="fridge-h">⚡ Meal Now Help!</div>
@@ -2078,13 +548,12 @@ Return ONLY this JSON (no explanation, no markdown):
           )}
         </div>
       )}
-
       <button className="back-b" onClick={()=>setScreen("prefs")}>← Change preferences</button>
       <div className="sum-bar">
         <div>
           <div className="s-lbl">Est. weekly food cost</div>
           <div className="s-val">£{total}</div>
-          <div className="s-note">Based on BNF portions · Sainsbury's April 2026 prices</div>
+          <div className="s-note">Community estimates · upload receipt for real prices</div>
         </div>
         <div style={{textAlign:"right"}}>
           <div className="s-lbl">Family of {prefs.familySize}</div>
@@ -2100,18 +569,8 @@ Return ONLY this JSON (no explanation, no markdown):
         <div className="bdg">{prefs.proteins.map(p=>pIcon[p]).join(" ")}</div>
         <div className="bdg">👨‍👩‍👧‍👦 {prefs.familySize}</div>
       </div>
-      <div style={{fontSize:12,color:B.faint,marginBottom:12}}>
-        Not feeling a meal? Hit swap for an alternative. Want to tweak the sides? Use the dropdowns below each meal to personalise your starch and veg. 🥔🥦
-      </div>
-
-      {plan.map((item,i)=>{
-        const custom = customisations[i]||{};
-        const currentStarch = custom.starch || item.defaultStarch;
-        const currentVeg = custom.veg || item.defaultVeg;
-        const starchChanged = custom.starch && custom.starch !== item.defaultStarch;
-        const vegChanged = custom.veg && custom.veg !== item.defaultVeg;
-
-        return (
+      <div style={{fontSize:12,color:B.faint,marginBottom:12}}>Not feeling a meal? Hit swap for an alternative — or click "Recipe links" to see how to cook it.</div>
+      {plan.map((item,i)=>(
         <div className="meal-c" key={i}>
           <div style={{flex:1}}>
             <div className="meal-day">{item.day}{item.day==="Friday"&&prefs.fridaySurprise?" 🎲":""}</div>
@@ -2122,66 +581,29 @@ Return ONLY this JSON (no explanation, no markdown):
               {prefs.glutenFree&&<span className="m-tag g">GF ✓</span>}
               {item.allergens?.length>0&&<span className="m-tag a">Contains: {item.allergens.slice(0,2).join(", ")}</span>}
             </div>
-
-            {/* ── Starch & Veg customisation ── */}
-            <div className="custom-row">
-              <div className="custom-sel-wrap">
-                <div className="custom-lbl">🥔 Change starch</div>
-                <select
-                  className={`custom-sel${starchChanged?" changed":""}`}
-                  value={currentStarch}
-                  onChange={e=>updateCustom(i,"starch",e.target.value)}
-                >
-                  {STARCH_OPTIONS.map(s=><option key={s} value={s}>{s}</option>)}
-                </select>
-                {starchChanged&&<div className="custom-changed-note">✏️ Changed from {item.defaultStarch}</div>}
-              </div>
-              <div className="custom-sel-wrap">
-                <div className="custom-lbl">🥦 Change veg</div>
-                <select
-                  className={`custom-sel${vegChanged?" changed":""}`}
-                  value={currentVeg}
-                  onChange={e=>updateCustom(i,"veg",e.target.value)}
-                >
-                  {VEG_OPTIONS.map(v=><option key={v} value={v}>{v}</option>)}
-                </select>
-                {vegChanged&&<div className="custom-changed-note">✏️ Changed from {item.defaultVeg}</div>}
-              </div>
-            </div>
-
-            {/* ── Recipe links ── */}
-            <div style={{marginTop:8}}>
+            <div style={{marginTop:6}}>
               <button className="recipe-btn" onClick={()=>setRecipeOpen(recipeOpen===i?null:i)}>
                 {recipeOpen===i?"Hide recipe links ▲":"Recipe links ▼"}
               </button>
               {recipeOpen===i&&(
                 <div className="recipe-links">
-                  <div style={{fontSize:10,color:B.muted,marginBottom:6}}>Find this recipe on:</div>
-                  {recipeSearch(item.meal, prefs.allergens).map((l,j)=>(
-                    <a key={j} href={l.url} target="_blank" rel="noopener noreferrer">→ {l.label}</a>
-                  ))}
-                  <div className="recipe-disclaimer">
-                    ⚠️ <strong>Always check the full recipe ingredients against your allergen requirements.</strong>{" "}
-                    GetMealWise filters by meal type but individual recipes may vary. If in doubt, check the label.
-                  </div>
+                  <div style={{fontSize:10,color:B.muted,marginBottom:4}}>Find this recipe on:</div>
+                  {recipeSearch(item.meal).map((l,j)=><a key={j} href={l.url} target="_blank" rel="noopener noreferrer">→ {l.label}</a>)}
                 </div>
               )}
             </div>
           </div>
-
-          <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6,flexShrink:0,marginLeft:10}}>
-            <div className="m-cost">~£{displayCost(item, i).toFixed(2)}</div>
+          <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6,flexShrink:0}}>
+            <div className="m-cost">~£{item.cost}</div>
             <button className="sw-btn" disabled={swapping===i} onClick={()=>swap(i)}>{swapping===i?"...":"↺ Swap"}</button>
           </div>
         </div>
-      );})}
-
+      ))}
       <button className="cta amber" onClick={()=>setScreen("shopping")}>✓ Approve plan & build shopping list</button>
       <button className="cta ghost" style={{marginTop:8}} onClick={generate}>↺ Generate completely new plan</button>
     </div></>
   );
 
-  // ── PREFERENCES SCREEN ──────────────────────────────────────────────────────
   return (
     <><style>{CSS}</style>
     <div className="app">
