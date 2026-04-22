@@ -111,8 +111,6 @@ const SUPERMARKETS = ["Sainsbury's","Tesco","ASDA","Morrisons","Aldi","Lidl","Wa
 const DAYS = ["Saturday","Sunday","Monday","Tuesday","Wednesday","Thursday","Friday"];
 const pIcon = {chicken:"🍗",beef:"🥩",pork:"🐷",lamb:"🫘",fish:"🐟",veggie:"🥦"};
 const cIcon = {pasta:"🍝 Pasta",rice:"🍚 Rice",potato:"🥔 Potato",other:"🥗 Other"};
-const FEEDBACK_WEBHOOK    = "https://script.google.com/macros/s/AKfycbx61QcQxS5188jM6ctu_xjWfJEJ2u65CGUgdzcA-pCO2OzMRtDy2xQOy0aiu6Yzluhc/exec";
-const SUGGESTIONS_WEBHOOK = "https://script.google.com/macros/s/AKfycbx61QcQxS5188jM6ctu_xjWfJEJ2u65CGUgdzcA-pCO2OzMRtDy2xQOy0aiu6Yzluhc/exec";
 
 const LOAD_MSGS = [
   "Searching 2.5 years of real family meal data...",
@@ -215,6 +213,15 @@ body{font-family:'Outfit',sans-serif;background:${B.bg};color:${B.text};min-heig
 .recipe-links a:hover{text-decoration:underline;}
 .back-b{background:transparent;border:none;color:${B.faint};font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:5px;padding:6px 0;margin-bottom:14px;}
 .back-b:hover{color:${B.muted};}
+.shop-actions{display:flex;gap:10px;margin:14px 0;}
+.shop-actions .cta{flex:1;}
+@media print{
+  .back-b,.tab-pills,.progress,.up-card,.shop-actions,.notice,.nav,.meal-now{display:none !important;}
+  body{background:#fff !important;color:#000 !important;}
+  .app{max-width:100% !important;padding:0 !important;}
+  .card{border:1px solid #ccc !important;break-inside:avoid;}
+  .shop-sec{page-break-inside:avoid;}
+}
 .shop-sec{margin-bottom:14px;}
 .shop-t{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:${B.faint};margin-bottom:7px;padding-bottom:4px;border-bottom:1px solid ${B.border};}
 .shop-i{font-size:13px;color:${B.text};padding:7px 0;border-bottom:1px solid ${B.bg};display:flex;align-items:center;gap:10px;}
@@ -318,7 +325,7 @@ export default function MealWise() {
     setLoading(true); setLoadMsg(0);
     const p = pool();
     const sys = `You are a family meal planner. Pick 7 dinners (Saturday–Friday) from the database.
-Rules: Sunday MUST be british-roast if sundayRoast true. If fridaySurprise true, Friday must match fridayCuisines. Max pasta=${prefs.maxPasta}, max rice=${prefs.maxRice}. No repeats. Vary proteins and cuisines.
+Rules: Sunday MUST be british-roast if sundayRoast true. If fridaySurprise true, Friday must match fridayCuisines. Max pasta=${prefs.maxPasta}, max rice=${prefs.maxRice}, max potato=${prefs.maxPotato}. No repeats. Vary proteins and cuisines.
 Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one sentence"},...]}`;
     try {
       const r = await fetch("https://api.anthropic.com/v1/messages",{
@@ -338,16 +345,6 @@ Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one s
     } catch { setPlan(fallback(p)); }
     setLoading(false); setScreen("plan");
     gtagEvent("plan_generated", { family_size: prefs.familySize, allergens_count: prefs.allergens.length });
-    fetch(FEEDBACK_WEBHOOK, {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        sheet:"Usage", timestamp:new Date().toISOString(),
-        postcode_area:postcode, supermarket:supers[0]||"",
-        family_size:prefs.familySize,
-        allergens_selected:prefs.allergens,
-        plan_generated:true,
-      }),
-    }).catch(e=>console.log("Usage ping error:",e));
   };
 
   const fallback = (p) => {
@@ -356,7 +353,11 @@ Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one s
       let pool2=p.filter(m=>!used.includes(m.name));
       if(day==="Sunday"&&prefs.sundayRoast) pool2=pool2.filter(m=>m.cuisine.includes("british-roast"));
       if(day==="Friday"&&prefs.fridaySurprise&&prefs.fridayCuisines.length) pool2=pool2.filter(m=>m.cuisine.some(c=>prefs.fridayCuisines.includes(c)));
-      pool2=pool2.filter(m=>!(m.carb==="pasta"&&(carbs.pasta||0)>=prefs.maxPasta)&&!(m.carb==="rice"&&(carbs.rice||0)>=prefs.maxRice));
+      pool2=pool2.filter(m=>
+        !(m.carb==="pasta"  && (carbs.pasta  ||0)>=prefs.maxPasta)  &&
+        !(m.carb==="rice"   && (carbs.rice   ||0)>=prefs.maxRice)   &&
+        !(m.carb==="potato" && (carbs.potato ||0)>=prefs.maxPotato)
+      );
       if(!pool2.length) pool2=p.filter(m=>!used.includes(m.name));
       const pick=pool2[Math.floor(Math.random()*pool2.length)]||p[0];
       used.push(pick.name); carbs[pick.carb]=(carbs[pick.carb]||0)+1;
@@ -414,36 +415,25 @@ Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one s
     } catch { setAiMsg("ok:Looks great — we'll review it shortly!"); }
   };
 
-  const submitFeedback = async () => {
+  const submitFeedback = () => {
     setFbSent(true);
     gtagEvent("feedback_submitted", { stars });
-    try {
-      await fetch(FEEDBACK_WEBHOOK, {
-        method:"POST", headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-          sheet:"Feedback", timestamp:new Date().toISOString(),
-          stars, feedback_text:feedback,
-          family_size:prefs.familySize,
-          postcode_area:postcode, supermarket:supers[0]||"",
-        }),
-      });
-    } catch(e) { console.log("Feedback webhook error:",e); }
   };
 
-  const submitSuggestion = async () => {
+  const submitSuggestion = () => {
     setSugSent(true);
+  };
+
+  const copyShoppingList = async () => {
+    const proteinLines = Object.entries(
+      plan.reduce((a,m)=>{a[m.protein]=(a[m.protein]||0)+1;return a;},{})
+    ).map(([p,n])=>`${p.charAt(0).toUpperCase()+p.slice(1)} — ${n} meal${n>1?"s":""}`);
+    const staples = ["White potatoes (large bag)","Carrots","White onions","Fresh garlic","Frozen peas","Frozen sweetcorn","Chicken stock cubes","Beef stock cubes","Tomato puree","Tinned chopped tomatoes","GF Gravy granules","Basmati / long grain rice","Olive oil","Fresh roasting herb mix","Butter or block margarine","Cheddar cheese"];
+    const text = `GetMealWise Shopping List\n\nPROTEINS:\n${proteinLines.join("\n")}\n\nSTAPLES:\n${staples.join("\n")}\n\nGenerated at getmealwise.co.uk`;
     try {
-      await fetch(SUGGESTIONS_WEBHOOK, {
-        method:"POST", headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-          sheet:"Suggestions", timestamp:new Date().toISOString(),
-          meal_name:sug.name, protein_type:sug.protein,
-          cuisine:sug.cuisine, notes:sug.notes,
-          family_size:prefs.familySize,
-          postcode_area:postcode, supermarket:supers[0]||"",
-        }),
-      });
-    } catch(e) { console.log("Suggestions webhook error:",e); }
+      await navigator.clipboard.writeText(text);
+      alert("Shopping list copied to clipboard!");
+    } catch(e) { console.warn("Clipboard error:",e); }
   };
 
   const total = plan?plan.reduce((s,m)=>s+parseFloat(m.cost),0).toFixed(2):0;
@@ -549,6 +539,10 @@ Return ONLY JSON: {"plan":[{"day":"Saturday","meal":"exact name","reason":"one s
           ))}
         </div>
         <div className="notice">Cost estimates based on typical UK prices. Upload your receipt below to help build real community pricing data!</div>
+      </div>
+      <div className="shop-actions">
+        <button className="cta ghost" onClick={()=>window.print()}>🖨 Print shopping list</button>
+        <button className="cta ghost" onClick={copyShoppingList}>📋 Copy to clipboard</button>
       </div>
       <div className="up-card">
         <div className="up-h">Help build the UK's meal cost map 🇬🇧</div>
